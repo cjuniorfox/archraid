@@ -1,13 +1,18 @@
 #!/bin/bash
-if [ "$ar_inst" = "" ]; then
-    echo -e "Input archraid chroot installation directory"
-    read ar_inst;
-fi;
 
-if [ "$country" = "" ]; then
-    echo -e "Input your repository's desired country (ex: UK, ES or BR)"
-    read country;
-fi;
+if [ -z $ar_inst]; then
+		ar_inst=$(whiptail --inputbox --title "ArchRAID" "Input archraid chroot installation directory" 8 50 3>&1 1>&2 2>&3)
+		if [ -z "$ar_inst" ]; then 
+  				break
+  		fi
+fi
+
+if [ -z $country]; then
+		country=$(whiptail --inputbox --title "ArchRAID" "Input archraid chroot installation directory" 8 50 3>&1 1>&2 2>&3)
+		if [ -z "$country" ]; then 
+  				break
+  		fi
+fi
 
 yes | pacman -Sy pacman-contrib
 #cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup

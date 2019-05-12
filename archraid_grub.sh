@@ -1,19 +1,25 @@
 #!/bin/bash
-if [ "$label" = "" ] ; then
-    echo "Input installation's label:"
-    read label;
-fi;
 
-if [ "$disk" = "" ]; then
-    echo -e "Input desired block device\n"
-    lsblk;
-    read disk;
-fi;
+if [ -z $ar_inst]; then
+        ar_inst=$(whiptail --inputbox --title "ArchRAID" "Input archraid chroot installation directory" 8 50 3>&1 1>&2 2>&3)
+        if [ -z "$ar_inst" ]; then 
+                break
+        fi
+fi
 
-if [ "$ar_inst" = "" ]; then
-    echo -e "Input archraid chroot installation directory"
-    read ar_inst;
-fi;
+if [ -z $label]; then
+        label=$(whiptail --inputbox --title "ArchRAID" "Input installation's label" 8 50 3>&1 1>&2 2>&3)
+        if [ -z "$country" ]; then 
+                break
+        fi
+fi
+
+if [ -z $disk]; then
+        country=$(whiptail --inputbox --title "ArchRAID" "Input desired block device" 8 50 3>&1 1>&2 2>&3)
+        if [ -z "$disk" ]; then 
+                break
+        fi
+fi
 
 mkdir -p $ar_inst/mnt/{efi,image} ;
 
