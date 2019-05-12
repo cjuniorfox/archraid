@@ -3,27 +3,27 @@
 if [ -z $ar_inst ]; then
         ar_inst=$(whiptail --inputbox --title "ArchRAID" "Input archraid chroot installation directory" 8 50 3>&1 1>&2 2>&3);
         if [ -z "$ar_inst" ]; then 
-                break;
+                exit;
         fi;
 fi;
 
 if [ -z $label ]; then
         label=$(whiptail --inputbox --title "ArchRAID" "Input installation's label" 8 50 3>&1 1>&2 2>&3);
         if [ -z "$country" ]; then 
-                break;
+                exit;
         fi;
 fi;
 
 if [ -z $disk ]; then
-        country=$(whiptail --inputbox --title "ArchRAID" "Input desired block device" 8 50 3>&1 1>&2 2>&3);
+        disk=$(whiptail --inputbox --title "ArchRAID" "Input desired block device" 8 50 3>&1 1>&2 2>&3);
         if [ -z "$disk" ]; then 
-                break;
+                exit;
         fi;
 fi;
 
 mkdir -p $ar_inst/mnt/{efi,image} ;
 
-parted --script $disk \
+parted --script "$disk" \
     mklabel gpt \
     mkpart primary fat32 2048s 4095s \
         name 1 BIOS \
