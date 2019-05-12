@@ -19,7 +19,8 @@ arch-chroot squashfs-root /bin/zsh << EOF
        pciutils xfsprogs cups \
        docker docker-compose \
        libnewt \
-       nbd syslinux mkinitcpio-nfs-utils
+       nbd syslinux mkinitcpio-nfs-utils \
+       memtest
     
 
     #Instala os pacotes AUR compilados
@@ -51,8 +52,8 @@ arch-chroot squashfs-root /bin/zsh << EOF
     mkdir -p /var/spool/samba/ &&
     chmod 1777 /var/spool/samba/
 
-    curl -s https://raw.githubusercontent.com/cjuniorfox/archraid/master/sh_config/setup_netatalk.sh | bash
-    curl -s https://raw.githubusercontent.com/cjuniorfox/archraid/master/sh_config/setup_samba.sh | bash
+    curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/sh_config/setup_netatalk.sh | bash -
+    curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/sh_config/setup_samba.sh | bash -
 
     mkinitcpio -p linux
     LANG=C pacman -Sl | awk '/\[installed\]$/ {print $1 "/" $2 "-" $3}' > /pkglist.txt

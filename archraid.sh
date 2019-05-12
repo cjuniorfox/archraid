@@ -73,6 +73,8 @@ mksquashfs squashfs-root airootfs.sfs
 rm -r squashfs-root
 sha512sum airootfs.sfs > airootfs.sha512
 
+
+
 iso_label="AR20190507"
 mkdir mnt
 mount -t vfat -o loop ~/customiso/EFI/archiso/efiboot.img mnt

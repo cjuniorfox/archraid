@@ -63,11 +63,9 @@ done;
 
 cd  "$ar_inst"/arch/x86_64/
 
-cp /root/.z* squashfs-root/root/
-
 #Reliza instalação dentro do CHRoot
 #curl -s http://server/path/script.sh | bash -s arg1 arg2
-curl -s https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot.sh | bash
+curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot.sh | bash -
 
 mv squashfs-root/boot/vmlinuz-linux "$ar_inst"/arch/boot/x86_64/vmlinuz-linux
 mv squashfs-root/boot/initramfs-linux.img "$ar_inst"/arch/boot/x86_64/initramfs-linux.img
