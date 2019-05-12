@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#mount -o remount,size=3G /run/archiso/cowspace
 if [ -z $ar_inst]; then
 		ar_inst=$(whiptail --inputbox --title "ArchRAID" "Input archraid chroot installation directory" 8 50 3>&1 1>&2 2>&3)
 		if [ -z "$ar_inst" ]; then 
