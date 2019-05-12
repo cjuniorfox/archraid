@@ -9,7 +9,7 @@ fi;
 
 if [ -z $label ]; then
         label=$(whiptail --inputbox --title "ArchRAID" "Input installation's label" 8 50 3>&1 1>&2 2>&3);
-        if [ -z "$country" ]; then 
+        if [ -z "$label" ]; then 
                 exit;
         fi;
 fi;
