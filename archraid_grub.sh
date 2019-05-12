@@ -1,9 +1,23 @@
- #!/bin/bash
- label="AR20190507";
+#!/bin/bash
+if [ "$label" = "" ] ; then
+    echo "Input installation's label:"
+    read label;
+fi;
 
- mkdir -p ~/mnt/{efi,image}
+if [ "$disk" = "" ]; then
+    echo -e "Input desired block device\n"
+    lsblk;
+    read disk;
+fi;
 
-  parted --script $disk \
+if [ "$ar_inst" = "" ]; then
+    echo -e "Input archraid chroot installation directory"
+    read ar_inst;
+fi;
+
+mkdir -p $HOME/mnt/{efi,image} ;
+
+parted --script $disk \
     mklabel gpt \
     mkpart primary fat32 2048s 4095s \
         name 1 BIOS \
@@ -15,8 +29,9 @@
         name 3 LINUX \
         set 3 msftdata on \
     mkpart primary ext4 8226563s 100% \
-        name 4 persistence
- gdisk $disk << EOF
+        name 4 persistence ;
+
+gdisk $disk << EOF
 r     # recovery and transformation options
 h     # make hybrid MBR
 1 2 3 # partition numbers for hybrid MBR
@@ -33,9 +48,53 @@ w     # write table to disk and exit
 Y     # confirm changes
 EOF
 
- mkfs.vfat -F32 -n "EFI" ${disk}2 &&
- mkfs.vfat -F32 ${disk}3 -n "$label" &&
- mkfs.ext4 ${disk}4 -L cow
+yes | mkfs.vfat -F32 -n "EFI" ${disk}2 &&
+yes | mkfs.vfat -F32 ${disk}3 -n "$label" &&
+yes | mkfs.ext4 ${disk}4 -L cow ;
 
- mount ${disk}2 ~/mnt/efi &&
- mount ${disk}3 ~/mnt/image
+mount ${disk}2 $HOME/mnt/efi &&
+mount ${disk}3 $HOME/mnt/image ;
+
+mkdir -p $HOME/mnt/image/{boot/{x86_64,grub},arch/x86_64} ;
+
+#File to load archraid boot
+touch $HOME/mnt/image/ARCHRAID ;
+
+cp -v $ar_inst/arch/x86_64/{airootfs.sfs,airootfs.sha512} $HOME/mnt/image/arch/x86_64/ ;
+cp -v $ar_inst/arch/boot/x86_64/{vmlinuz-linux,initramfs-linux.img,initramfs-linux-fallback.img} $HOME/mnt/image/boot/x86_64/ ;
+cp -v $ar_inst/arch/boot/memtest $HOME/mnt/image/boot/ ;
+
+
+#grub menu
+cat << EOF > $HOME/mnt/image/boot/grub/grub.cfg
+search --set=root --file /ARCHRAID
+insmod all_video
+set default="0"
+set timeout=5
+menuentry "ArchRaid x86_64 USB" {
+    linux /boot/x86_64/vmlinuz-linux archisobasedir=arch archisolabel=$label cow_label=cow intel_iommu=on
+    initrd /boot/x86_64/initramfs-linux.img
+}
+menuentry "ArchRaid x86_64 USB (fallback)" {
+    linux /boot/x86_64/vmlinuz-linux archisobasedir=arch archisolabel=$label cow_label=cow intel_iommu=on
+    initrd /boot/x86_64/initramfs-linux-fallback.img
+}
+menuentry "Run Memtest86+" {
+    linux /boot/memtest
+}
+EOF
+
+#UEFI boot installation
+grub-install \
+    --target=x86_64-efi \
+    --efi-directory=$HOME/mnt/efi \
+    --boot-directory=$HOME/mnt/image/boot \
+    --removable \
+    --recheck
+
+#Legacy Bios boot installation
+grub-install \
+    --target=i386-pc \
+    --boot-directory=$HOME/mnt/image/boot \
+    --recheck \
+    $disk
