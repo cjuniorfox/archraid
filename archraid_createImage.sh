@@ -8,7 +8,7 @@ if [ -z $ar_inst]; then
 fi
 
 if [ -z $country]; then
-		country=$(whiptail --inputbox --title "ArchRAID" "Input archraid chroot installation directory" 8 50 3>&1 1>&2 2>&3)
+		country=$(whiptail --inputbox --title "ArchRAID" "Input your country for pacman's repository" 8 50 3>&1 1>&2 2>&3)
 		if [ -z "$country" ]; then 
   				break
   		fi
