@@ -15,7 +15,7 @@ if [ "$ar_inst" = "" ]; then
     read ar_inst;
 fi;
 
-mkdir -p $HOME/mnt/{efi,image} ;
+mkdir -p $ar_inst/mnt/{efi,image} ;
 
 parted --script $disk \
     mklabel gpt \
@@ -52,21 +52,21 @@ yes | mkfs.vfat -F32 -n "EFI" ${disk}2 &&
 yes | mkfs.vfat -F32 ${disk}3 -n "$label" &&
 yes | mkfs.ext4 ${disk}4 -L cow ;
 
-mount ${disk}2 $HOME/mnt/efi &&
-mount ${disk}3 $HOME/mnt/image ;
+mount ${disk}2 $ar_inst/mnt/efi &&
+mount ${disk}3 $ar_inst/mnt/image ;
 
-mkdir -p $HOME/mnt/image/{boot/{x86_64,grub},arch/x86_64} ;
+mkdir -p $ar_inst/mnt/image/{boot/{x86_64,grub},arch/x86_64} ;
 
 #File to load archraid boot
 touch $HOME/mnt/image/ARCHRAID ;
 
-cp -v $ar_inst/arch/x86_64/{airootfs.sfs,airootfs.sha512} $HOME/mnt/image/arch/x86_64/ ;
-cp -v $ar_inst/arch/boot/x86_64/{vmlinuz-linux,initramfs-linux.img,initramfs-linux-fallback.img} $HOME/mnt/image/boot/x86_64/ ;
-cp -v $ar_inst/arch/boot/memtest $HOME/mnt/image/boot/ ;
+cp -v $ar_inst/arch/x86_64/{airootfs.sfs,airootfs.sha512} $ar_inst/mnt/image/arch/x86_64/ ;
+cp -v $ar_inst/arch/boot/x86_64/{vmlinuz-linux,initramfs-linux.img,initramfs-linux-fallback.img} $ar_inst/mnt/image/boot/x86_64/ ;
+cp -v $ar_inst/arch/boot/memtest $ar_inst/mnt/image/boot/ ;
 
 
 #grub menu
-cat << EOF > $HOME/mnt/image/boot/grub/grub.cfg
+cat << EOF > $ar_inst/mnt/image/boot/grub/grub.cfg
 search --set=root --file /ARCHRAID
 insmod all_video
 set default="0"
@@ -87,14 +87,14 @@ EOF
 #UEFI boot installation
 grub-install \
     --target=x86_64-efi \
-    --efi-directory=$HOME/mnt/efi \
-    --boot-directory=$HOME/mnt/image/boot \
+    --efi-directory=$ar_inst/mnt/efi \
+    --boot-directory=$ar_inst/mnt/image/boot \
     --removable \
     --recheck
 
 #Legacy Bios boot installation
 grub-install \
     --target=i386-pc \
-    --boot-directory=$HOME/mnt/image/boot \
+    --boot-directory=$ar_inst/mnt/image/boot \
     --recheck \
     $disk
