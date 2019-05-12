@@ -1,6 +1,6 @@
 #!/bin/bash
 
-arch-chroot squashfs-root /bin/zsh << EOF
+arch-chroot squashfs-root << EOF
 
     chsh -s /bin/zsh 
 
@@ -19,8 +19,7 @@ arch-chroot squashfs-root /bin/zsh << EOF
        pciutils xfsprogs cups \
        docker docker-compose \
        libnewt \
-       nbd syslinux mkinitcpio-nfs-utils \
-       memtest
+       nbd syslinux mkinitcpio-nfs-utils
     
 
     #Instala os pacotes AUR compilados

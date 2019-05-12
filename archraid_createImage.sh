@@ -32,14 +32,14 @@ pacstrap squashfs-root base archiso zsh
 #Compila dependências AUR
 declare -a aurlist=("perl-authen-pam" "perl-encode-detect")  &&
 for package in ${aurlist[@]}; do
-    cd /tmp
-    git clone "https://aur.archlinux.org/$package.git"
+    cd /tmp ;
+    git clone "https://aur.archlinux.org/$package.git" ;
     cd "$package" || exit;
     chgrp nobody . &&
     chmod g+ws . &&
     setfacl -m u::rwx,g::rwx . &&
     setfacl -d --set u::rwx,g::rwx,o::- . &&
-    sudo -u nobody makepkg &&
+    sudo -u nobody makepkg ;
     for instPkg in ./*.pkg.tar.xz; do
         yes | pacman -U "$instPkg";
     done;
@@ -48,14 +48,14 @@ done;
 #compilar pacotes AUR
 declare -a aurlist=("perl-authen-pam" "perl-encode-detect" "webmin" "mergerfs" "snapraid" "netatalk" "bcache-tools") &&
 for package in ${aurlist[@]}; do
-    cd /tmp
-    git clone "https://aur.archlinux.org/$package.git"
+    cd /tmp ;
+    git clone "https://aur.archlinux.org/$package.git" ;
     cd "$package" || exit;
     chgrp nobody . &&
     chmod g+ws . &&
     setfacl -m u::rwx,g::rwx . &&
     setfacl -d --set u::rwx,g::rwx,o::- . &&
-    sudo -u nobody makepkg &&
+    sudo -u nobody makepkg ;
     for instPkg in ./*.pkg.tar.xz; do
         cp "$instPkg" "$ar_inst"/arch/x86_64/squashfs-root/opt/;
     done;
