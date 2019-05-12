@@ -70,6 +70,7 @@ curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfo
 mv squashfs-root/boot/vmlinuz-linux "$ar_inst"/arch/boot/x86_64/vmlinuz-linux
 mv squashfs-root/boot/initramfs-linux.img "$ar_inst"/arch/boot/x86_64/initramfs-linux.img
 mv squashfs-root/boot/initramfs-linux-fallback.img "$ar_inst"/arch/boot/x86_64/initramfs-linux-fallback.img
+mv squashfs-root/boot/memtest86+/memtest.bin "$ar_inst"/arch/boot/memtest
 mv squashfs-root/pkglist.txt "$ar_inst"/arch/pkglist.x86_64.txt
 
 mksquashfs squashfs-root airootfs.sfs

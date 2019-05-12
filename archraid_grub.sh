@@ -1,25 +1,25 @@
 #!/bin/bash
 
-if [ -z $ar_inst]; then
-        ar_inst=$(whiptail --inputbox --title "ArchRAID" "Input archraid chroot installation directory" 8 50 3>&1 1>&2 2>&3)
+if [ -z $ar_inst ]; then
+        ar_inst=$(whiptail --inputbox --title "ArchRAID" "Input archraid chroot installation directory" 8 50 3>&1 1>&2 2>&3);
         if [ -z "$ar_inst" ]; then 
-                break
-        fi
-fi
+                break;
+        fi;
+fi;
 
-if [ -z $label]; then
-        label=$(whiptail --inputbox --title "ArchRAID" "Input installation's label" 8 50 3>&1 1>&2 2>&3)
+if [ -z $label ]; then
+        label=$(whiptail --inputbox --title "ArchRAID" "Input installation's label" 8 50 3>&1 1>&2 2>&3);
         if [ -z "$country" ]; then 
-                break
-        fi
-fi
+                break;
+        fi;
+fi;
 
-if [ -z $disk]; then
-        country=$(whiptail --inputbox --title "ArchRAID" "Input desired block device" 8 50 3>&1 1>&2 2>&3)
+if [ -z $disk ]; then
+        country=$(whiptail --inputbox --title "ArchRAID" "Input desired block device" 8 50 3>&1 1>&2 2>&3);
         if [ -z "$disk" ]; then 
-                break
-        fi
-fi
+                break;
+        fi;
+fi;
 
 mkdir -p $ar_inst/mnt/{efi,image} ;
 
@@ -64,7 +64,7 @@ mount ${disk}3 $ar_inst/mnt/image ;
 mkdir -p $ar_inst/mnt/image/{boot/{x86_64,grub},arch/x86_64} ;
 
 #File to load archraid boot
-touch $HOME/mnt/image/ARCHRAID ;
+touch $ar_inst/mnt/image/ARCHRAID ;
 
 cp -v $ar_inst/arch/x86_64/{airootfs.sfs,airootfs.sha512} $ar_inst/mnt/image/arch/x86_64/ ;
 cp -v $ar_inst/arch/boot/x86_64/{vmlinuz-linux,initramfs-linux.img,initramfs-linux-fallback.img} $ar_inst/mnt/image/boot/x86_64/ ;
