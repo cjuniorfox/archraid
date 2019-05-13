@@ -81,19 +81,19 @@ insmod all_video
 set default="0"
 set timeout=5
 menuentry "ArchRaid x86_64 USB" {
-    linux /boot/x86_64/vmlinuz-linux archisobasedir=archraid archisolabel=$label cow_label=cow intel_iommu=on
-    initrd /boot/x86_64/initramfs-linux.img
+    linux /archraid/boot/x86_64/vmlinuz-linux archisobasedir=archraid archisolabel=$label cow_label=cow intel_iommu=on
+    initrd /archraid/boot/x86_64/initramfs-linux.img
 }
 menuentry "ArchRaid (GUI) x86_64 USB" {
-    linux /boot/x86_64/vmlinuz-linux archisobasedir=archraid-gui archisolabel=$label cow_label=cow intel_iommu=on
-    initrd /boot/x86_64/initramfs-linux.img
+    linux /archraid/boot/x86_64/vmlinuz-linux archisobasedir=archraid-gui archisolabel=$label cow_label=cow intel_iommu=on
+    initrd /archraid/boot/x86_64/initramfs-linux.img
 }
 menuentry "ArchRaid x86_64 USB (fallback)" {
-    linux /boot/x86_64/vmlinuz-linux archisobasedir=archraid archisolabel=$label cow_label=cow intel_iommu=on
-    initrd /boot/x86_64/initramfs-linux-fallback.img
+    linux /archraid/boot/x86_64/vmlinuz-linux archisobasedir=archraid archisolabel=$label cow_label=cow intel_iommu=on
+    initrd /archraid/boot/x86_64/initramfs-linux-fallback.img
 }
 menuentry "Run Memtest86+" {
-    linux /boot/memtest
+    linux /archraid/boot/memtest
 }
 EOF
 
