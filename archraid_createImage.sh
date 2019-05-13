@@ -82,7 +82,6 @@ mksquashfs squashfs-root airootfs.sfs -e \
   boot/memtest86+ \
   pkglist.txt
 
-rm -r squashfs-root
 sha512sum airootfs.sfs > airootfs.sha512
 
 #Realiza instalação adicional de ambiente gráfico
@@ -99,5 +98,4 @@ mksquashfs squashfs-root "$ar_inst"/archraid-gui/x86_64/airootfs.sfs -e \
   pkglist.txt
 
 sha512sum "$ar_inst"/archraid-gui/x86_64/airootfs.sfs > "$ar_inst"/archraid-gui/x86_64/airootfs.sha512
-
-
+rm -r squashfs-root
