@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Label e cow
-sed -i "s/archisolabel=ARCH_201904/archisolabel=$iso_label cow_label=cow intel_iommu=on/" ../../arch/boot/syslinux/archiso_sys.cfg
+sed -i "s/archisolabel=ARCH_201904/archisolabel=$iso_label cow_label=cow intel_iommu=on/" ../../boot/syslinux/archiso_sys.cfg
 #monta EFI para modificar strings
 mkdir mnt
 mount -t vfat -o loop 

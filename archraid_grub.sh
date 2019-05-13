@@ -61,14 +61,14 @@ yes | mkfs.ext4 ${disk}4 -L cow ;
 mount ${disk}2 $ar_inst/mnt/efi &&
 mount ${disk}3 $ar_inst/mnt/image ;
 
-mkdir -p $ar_inst/mnt/image/{boot/{x86_64,grub},arch/x86_64} ;
+mkdir -p $ar_inst/mnt/image/{boot/{x86_64,grub},archraid/x86_64} ;
 
 #File to load archraid boot
 touch $ar_inst/mnt/image/ARCHRAID ;
 
-cp -v $ar_inst/arch/x86_64/{airootfs.sfs,airootfs.sha512} $ar_inst/mnt/image/arch/x86_64/ ;
-cp -v $ar_inst/arch/boot/x86_64/{vmlinuz-linux,initramfs-linux.img,initramfs-linux-fallback.img} $ar_inst/mnt/image/boot/x86_64/ ;
-cp -v $ar_inst/arch/boot/memtest $ar_inst/mnt/image/boot/ ;
+cp -v $ar_inst/archraid/x86_64/{airootfs.sfs,airootfs.sha512} $ar_inst/mnt/image/archraid/x86_64/ ;
+cp -v $ar_inst/archraid/boot/x86_64/{vmlinuz-linux,initramfs-linux.img,initramfs-linux-fallback.img} $ar_inst/mnt/image/boot/x86_64/ ;
+cp -v $ar_inst/archraid/boot/memtest $ar_inst/mnt/image/boot/ ;
 
 
 #grub menu

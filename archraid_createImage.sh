@@ -23,9 +23,9 @@ curl -s "https://www.archlinux.org/mirrorlist/?country=$country&protocol=http&pr
 echo -e "\ny" | pacman -Sy --force base-devel perl-module-build perl-net-ssleay avahi python2 dbus-glib python2-dbus git \
   squashfs-tools
 
-mkdir -p "$ar_inst"/arch/{x86_64/squashfs-root,boot/x86_64}
+mkdir -p "$ar_inst"/archraid/{x86_64/squashfs-root,boot/x86_64}
 
-cd  "$ar_inst"/arch/x86_64/
+cd  "$ar_inst"/archraid/x86_64/
 
 pacstrap squashfs-root base archiso zsh
 
@@ -57,21 +57,28 @@ for package in ${aurlist[@]}; do
     setfacl -d --set u::rwx,g::rwx,o::- . &&
     sudo -u nobody makepkg ;
     for instPkg in ./*.pkg.tar.xz; do
-        cp "$instPkg" "$ar_inst"/arch/x86_64/squashfs-root/opt/;
+        cp "$instPkg" "$ar_inst"/archraid/x86_64/squashfs-root/opt/;
     done;
 done;
 
-cd  "$ar_inst"/arch/x86_64/
+cd  "$ar_inst"/archraid/x86_64/
 
 #Reliza instalação dentro do CHRoot
 #curl -s http://server/path/script.sh | bash -s arg1 arg2
 curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot.sh | bash -
 
-mv squashfs-root/boot/vmlinuz-linux "$ar_inst"/arch/boot/x86_64/vmlinuz-linux
-mv squashfs-root/boot/initramfs-linux.img "$ar_inst"/arch/boot/x86_64/initramfs-linux.img
-mv squashfs-root/boot/initramfs-linux-fallback.img "$ar_inst"/arch/boot/x86_64/initramfs-linux-fallback.img
-mv squashfs-root/boot/memtest86+/memtest.bin "$ar_inst"/arch/boot/memtest
-mv squashfs-root/pkglist.txt "$ar_inst"/arch/pkglist.x86_64.txt
+#Duplica archraid e realiza instalação adicional para ambiente gráfico
+
+cp -rv "$ar_inst"/archraid "$ar_inst"/archraidgui
+#Realiza instalação adicional de ambiente gráfico
+curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot-gui.sh | bash -
+
+
+mv squashfs-root/boot/vmlinuz-linux "$ar_inst"/archraid/boot/x86_64/vmlinuz-linux
+mv squashfs-root/boot/initramfs-linux.img "$ar_inst"/archraid/boot/x86_64/initramfs-linux.img
+mv squashfs-root/boot/initramfs-linux-fallback.img "$ar_inst"/archraid/boot/x86_64/initramfs-linux-fallback.img
+mv squashfs-root/boot/memtest86+/memtest.bin "$ar_inst"/archraid/boot/memtest
+mv squashfs-root/pkglist.txt "$ar_inst"/archraid/pkglist.x86_64.txt
 
 mksquashfs squashfs-root airootfs.sfs
 rm -r squashfs-root
