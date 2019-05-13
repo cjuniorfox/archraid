@@ -1,18 +1,18 @@
 #!/bin/bash
 mount -o remount,size=3G /run/archiso/cowspace;
-if [ -z $ar_inst]; then
+if [ -z $ar_inst ]; then
 		ar_inst=$(whiptail --inputbox --title "ArchRAID" "Input archraid chroot installation directory" 8 50 3>&1 1>&2 2>&3)
 		if [ -z "$ar_inst" ]; then 
-  				break
-  		fi
-fi
+  				exit;
+  		fi;
+fi;
 
-if [ -z $country]; then
+if [ -z $country ]; then
 		country=$(whiptail --inputbox --title "ArchRAID" "Input your country for pacman's repository" 8 50 3>&1 1>&2 2>&3)
 		if [ -z "$country" ]; then 
-  				break
-  		fi
-fi
+  				exit;
+  		fi;
+fi;
 
 yes | pacman -Sy pacman-contrib
 #cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
@@ -23,9 +23,11 @@ curl -s "https://www.archlinux.org/mirrorlist/?country=$country&protocol=http&pr
 echo -e "\ny" | pacman -Sy --force base-devel perl-module-build perl-net-ssleay avahi python2 dbus-glib python2-dbus git \
   squashfs-tools
 
-mkdir -p "$ar_inst"/archraid/{x86_64/squashfs-root,boot/x86_64}
+mkdir -p "$ar_inst"/{archraid,archraid-gui}/{x86_64,boot/x86_64}
 
 cd  "$ar_inst"/archraid/x86_64/
+
+mkdir squashfs-root
 
 pacstrap squashfs-root base archiso zsh
 
@@ -67,20 +69,35 @@ cd  "$ar_inst"/archraid/x86_64/
 #curl -s http://server/path/script.sh | bash -s arg1 arg2
 curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot.sh | bash -
 
-#Duplica archraid e realiza instalação adicional para ambiente gráfico
+cp squashfs-root/boot/vmlinuz-linux "$ar_inst"/archraid/boot/x86_64/vmlinuz-linux
+cp squashfs-root/boot/initramfs-linux.img "$ar_inst"/archraid/boot/x86_64/initramfs-linux.img
+cp squashfs-root/boot/initramfs-linux-fallback.img "$ar_inst"/archraid/boot/x86_64/initramfs-linux-fallback.img
+cp squashfs-root/boot/memtest86+/memtest.bin "$ar_inst"/archraid/boot/memtest
+cp squashfs-root/pkglist.txt "$ar_inst"/archraid/pkglist.x86_64.txt
 
-cp -rv "$ar_inst"/archraid "$ar_inst"/archraidgui
+mksquashfs squashfs-root airootfs.sfs -e \
+  boot/vmlinuz-linux \
+  boot/initramfs-linux.img \
+  boot/initramfs-linux-fallback.img \
+  boot/memtest86+ \
+  pkglist.txt
+
+rm -r squashfs-root
+sha512sum airootfs.sfs > airootfs.sha512
+
 #Realiza instalação adicional de ambiente gráfico
 curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot-gui.sh | bash -
 
+cp squashfs-root/pkglist.txt "$ar_inst"/archraid-gui/pkglist.x86_64.txt
 
-mv squashfs-root/boot/vmlinuz-linux "$ar_inst"/archraid/boot/x86_64/vmlinuz-linux
-mv squashfs-root/boot/initramfs-linux.img "$ar_inst"/archraid/boot/x86_64/initramfs-linux.img
-mv squashfs-root/boot/initramfs-linux-fallback.img "$ar_inst"/archraid/boot/x86_64/initramfs-linux-fallback.img
-mv squashfs-root/boot/memtest86+/memtest.bin "$ar_inst"/archraid/boot/memtest
-mv squashfs-root/pkglist.txt "$ar_inst"/archraid/pkglist.x86_64.txt
+#cria novamente imagem compactada do sistema
+mksquashfs squashfs-root "$ar_inst"/archraid-gui/x86_64/airootfs.sfs -e \
+  boot/vmlinuz-linux \
+  boot/initramfs-linux.img \
+  boot/initramfs-linux-fallback.img \
+  boot/memtest86+ \
+  pkglist.txt
 
-mksquashfs squashfs-root airootfs.sfs
-rm -r squashfs-root
-sha512sum airootfs.sfs > airootfs.sha512
+sha512sum "$ar_inst"/archraid-gui/x86_64/airootfs.sfs > "$ar_inst"/archraid-gui/x86_64/airootfs.sha512
+
 

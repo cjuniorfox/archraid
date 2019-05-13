@@ -61,7 +61,7 @@ yes | mkfs.ext4 ${disk}4 -L cow ;
 mount ${disk}2 $ar_inst/mnt/efi &&
 mount ${disk}3 $ar_inst/mnt/image ;
 
-mkdir -p $ar_inst/mnt/image/{boot/{x86_64,grub},archraid/x86_64} ;
+mkdir -p $ar_inst/mnt/image/{boot/{x86_64,grub},archraid/x86_64,archraid-gui/x86_64} ;
 
 #File to load archraid boot
 touch $ar_inst/mnt/image/ARCHRAID ;
@@ -69,6 +69,8 @@ touch $ar_inst/mnt/image/ARCHRAID ;
 cp -v $ar_inst/archraid/x86_64/{airootfs.sfs,airootfs.sha512} $ar_inst/mnt/image/archraid/x86_64/ ;
 cp -v $ar_inst/archraid/boot/x86_64/{vmlinuz-linux,initramfs-linux.img,initramfs-linux-fallback.img} $ar_inst/mnt/image/boot/x86_64/ ;
 cp -v $ar_inst/archraid/boot/memtest $ar_inst/mnt/image/boot/ ;
+cp -v $ar_inst/archraid-gui/x86_64/{airootfs.sfs,airootfs.sha512} $ar_inst/mnt/image/archraid-gui/x86_64/ ;
+
 
 
 #grub menu
@@ -78,11 +80,15 @@ insmod all_video
 set default="0"
 set timeout=5
 menuentry "ArchRaid x86_64 USB" {
-    linux /boot/x86_64/vmlinuz-linux archisobasedir=arch archisolabel=$label cow_label=cow intel_iommu=on
+    linux /boot/x86_64/vmlinuz-linux archisobasedir=archraid archisolabel=$label cow_label=cow intel_iommu=on
+    initrd /boot/x86_64/initramfs-linux.img
+}
+menuentry "ArchRaid (GUI) x86_64 USB" {
+    linux /boot/x86_64/vmlinuz-linux archisobasedir=archraid-gui archisolabel=$label cow_label=cow intel_iommu=on
     initrd /boot/x86_64/initramfs-linux.img
 }
 menuentry "ArchRaid x86_64 USB (fallback)" {
-    linux /boot/x86_64/vmlinuz-linux archisobasedir=arch archisolabel=$label cow_label=cow intel_iommu=on
+    linux /boot/x86_64/vmlinuz-linux archisobasedir=archraid archisolabel=$label cow_label=cow intel_iommu=on
     initrd /boot/x86_64/initramfs-linux-fallback.img
 }
 menuentry "Run Memtest86+" {

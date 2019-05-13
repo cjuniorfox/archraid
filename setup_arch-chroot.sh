@@ -12,7 +12,7 @@ arch-chroot squashfs-root << EOF
 
     sed -i  s/CheckSpace/\#CheckSpace/ /etc/pacman.conf
 
-    yes | pacman -Syu --force archiso linux
+    yes | pacman -Syu --force archiso linux memteste86+
     yes | pacman -S qemu libvirt ovmf \
        bridge-utils dhcp openssh \
        samba transmission-cli apache \
@@ -43,7 +43,7 @@ arch-chroot squashfs-root << EOF
     echo "LANG=pt_BR.UTF-8" > /etc/locale.conf
     locale-gen
 
-    sed -i "s/HOOKS=(base udev/HOOKS=(base udev lvm2 memdisk archiso_shutdown archiso archiso_loop_mnt archiso_pxe_common archiso_pxe_nbd archiso_pxe_http archiso_pxe_nfs archiso_kms/" /etc/mkinitcpio.conf 
+    sed -i "s/HOOKS=(base udev/HOOKS=(base udev bcache lvm2 memdisk archiso_shutdown archiso archiso_loop_mnt archiso_pxe_common archiso_pxe_nbd archiso_pxe_http archiso_pxe_nfs archiso_kms/" /etc/mkinitcpio.conf 
     sed -i "s/MODULES=()/MODULES=(bcache vfio vfio_iommu_type1 vfio_pci vfio_virqfd)/" /etc/mkinitcpio.conf
 
     systemctl enable dhcpcd netatalk samba sshd transmission httpd docker libvirtd webmin
