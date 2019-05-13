@@ -67,7 +67,12 @@ cd  "$ar_inst"/archraid/x86_64/
 
 #Reliza instalação dentro do CHRoot
 #curl -s http://server/path/script.sh | bash -s arg1 arg2
-curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot.sh | bash -
+#!/bin/bash
+
+arch-chroot squashfs-root << EOF
+  curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot.sh | bash -
+  exit
+EOF
 
 cp squashfs-root/boot/vmlinuz-linux "$ar_inst"/archraid/boot/x86_64/vmlinuz-linux
 cp squashfs-root/boot/initramfs-linux.img "$ar_inst"/archraid/boot/x86_64/initramfs-linux.img
@@ -85,7 +90,10 @@ mksquashfs squashfs-root airootfs.sfs -e \
 sha512sum airootfs.sfs > airootfs.sha512
 
 #Realiza instalação adicional de ambiente gráfico
-curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot-gui.sh | bash -
+arch-chroot squashfs-root << EOF
+  curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot-gui.sh | bash -
+  exit
+EOF
 
 cp squashfs-root/pkglist.txt "$ar_inst"/archraid-gui/pkglist.x86_64.txt
 

@@ -1,7 +1,5 @@
 #!/bin/bash
 
-arch-chroot squashfs-root << EOF
-
     chsh -s /bin/zsh 
 
     pacman-key --init &&
@@ -23,7 +21,8 @@ arch-chroot squashfs-root << EOF
     
 
     #Instala os pacotes AUR compilados
-    for file in /opt/*.pkg.tar.xz; do 
+    for file in /opt/*.pkg.tar.xz; do
+        echo "Instalando $file"
         yes | pacman -U "$file";
         rm "$file"
     done;
@@ -54,9 +53,6 @@ arch-chroot squashfs-root << EOF
     curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/sh_config/setup_netatalk.sh | bash -
     curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/sh_config/setup_samba.sh | bash -
 
-    mkinitcpio -p linux
-    LANG=C pacman -Sl | awk '/\[installed\]$/ {print $1 "/" $2 "-" $3}' > /pkglist.txt
-    yes | pacman -Scc
-
-    exit
-EOF
+    mkinitcpio -p linux;
+    LANG=C pacman -Sl | awk '/\[installed\]$/ {print $1 "/" $2 "-" $3}' > /pkglist.txt;
+    yes | pacman -Scc;
