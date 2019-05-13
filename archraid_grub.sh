@@ -66,6 +66,7 @@ mkdir -p $ar_inst/mnt/image/{boot/{x86_64,grub},archraid/x86_64,archraid-gui/x86
 #File to load archraid boot
 touch $ar_inst/mnt/image/ARCHRAID ;
 
+echo "Copying files to block device";
 cp -rv "$ar_inst"/archraid/* "$ar_inst"/mnt/image/archraid/ &&
 cp -rv "$ar_inst"/archraid-gui/* "$ar_inst"/mnt/image/archraid-gui/
 #cp -v $ar_inst/archraid/x86_64/{airootfs.sfs,airootfs.sha512} $ar_inst/mnt/image/archraid/x86_64/ ;
