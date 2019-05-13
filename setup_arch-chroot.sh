@@ -10,7 +10,7 @@
 
     sed -i  s/CheckSpace/\#CheckSpace/ /etc/pacman.conf
 
-    yes | pacman -Syu --force archiso linux memteste86+
+    yes | pacman -Syu --force archiso linux memtest86+
     yes | pacman -S qemu libvirt ovmf \
        bridge-utils dhcp openssh \
        samba transmission-cli apache \
