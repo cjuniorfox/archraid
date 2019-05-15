@@ -1,17 +1,24 @@
 #!/bin/bash
 mount -o remount,size=3G /run/archiso/cowspace;
 if [ -z $ar_inst ]; then
-		ar_inst=$(whiptail --inputbox --title "ArchRAID" "Input archraid chroot installation directory" 8 50 3>&1 1>&2 2>&3)
-		if [ -z "$ar_inst" ]; then 
-  				exit;
-  		fi;
+	ar_inst=$(whiptail --inputbox --title "ArchRAID" "Input archraid chroot installation directory" 8 50 3>&1 1>&2 2>&3)
+	if [ -z "$ar_inst" ]; then 
+        	exit;
+    fi;
 fi;
 
 if [ -z $country ]; then
-		country=$(whiptail --inputbox --title "ArchRAID" "Input your country for pacman's repository" 8 50 3>&1 1>&2 2>&3)
-		if [ -z "$country" ]; then 
-  				exit;
-  		fi;
+	country=$(whiptail --inputbox --title "ArchRAID" "Input your country for Pacman's repository" 8 50 3>&1 1>&2 2>&3)
+	if [ -z "$country" ]; then 
+  			exit;
+  	fi;
+fi;
+
+if [ -z $hostname ]; then
+  hostname=$(whiptail --inputbox --title "ArchRAID" "Input your desired hostname" 8 50 3>&1 1>&2 2>&3)
+  if [ -z "$hostname" ]; then 
+        exit;
+    fi;
 fi;
 
 yes | pacman -Sy pacman-contrib
@@ -31,12 +38,24 @@ mkdir squashfs-root
 
 pacstrap squashfs-root base archiso zsh
 
+#Pacotes para Webvirtmgr
+#yes | pacman -S dmidecode dnsmasq ebtables libvirt-python python2 python2-django python2-gunicorn \
+#     python2-lockfile python2-pip bridge-utils python-distribute python-numpy libvirt-python2 supervisor
+
+#Pacote para build websockfy
+yes | pacman -S python-distribute
+
+#Pacote para build webvirtmgr
+yes | pacman -S python2-pip
+
+
 #Compila dependências AUR
-declare -a aurlist=("perl-authen-pam" "perl-encode-detect")  &&
+declare -a aurlist=("perl-authen-pam" "perl-encode-detect" "websockify" "python2-django-auth-ldap")  &&
 for package in ${aurlist[@]}; do
     cd /tmp ;
     git clone "https://aur.archlinux.org/$package.git" ;
     cd "$package" || exit;
+    chmod -R 777 /usr/lib/python*
     chgrp nobody . &&
     chmod g+ws . &&
     setfacl -m u::rwx,g::rwx . &&
@@ -45,22 +64,27 @@ for package in ${aurlist[@]}; do
     for instPkg in ./*.pkg.tar.xz; do
         yes | pacman -U "$instPkg";
     done;
+    chmod -R 755 /usr/lib/python*
 done;
 
 #compilar pacotes AUR
-declare -a aurlist=("perl-authen-pam" "perl-encode-detect" "webmin" "mergerfs" "snapraid" "netatalk" "bcache-tools") &&
+declare -a aurlist=("perl-authen-pam" "perl-encode-detect" "webmin" \
+ "mergerfs" "snapraid" "netatalk" "bcache-tools" \
+ "websockify" "python2-django-auth-ldap" "webvirtmgr-git" ) &&
 for package in ${aurlist[@]}; do
     cd /tmp ;
     git clone "https://aur.archlinux.org/$package.git" ;
     cd "$package" || exit;
+    chmod -R 777 /usr/lib/python*
     chgrp nobody . &&
     chmod g+ws . &&
     setfacl -m u::rwx,g::rwx . &&
     setfacl -d --set u::rwx,g::rwx,o::- . &&
-    sudo -u nobody makepkg ;
+    sudo -u nobody makepkg -d;
     for instPkg in ./*.pkg.tar.xz; do
         cp "$instPkg" "$ar_inst"/archraid/x86_64/squashfs-root/opt/;
     done;
+    chmod -R 755 /usr/lib/python*
 done;
 
 cd  "$ar_inst"/archraid/x86_64/
@@ -70,14 +94,14 @@ cd  "$ar_inst"/archraid/x86_64/
 #!/bin/bash
 
 arch-chroot squashfs-root << EOF
-  curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot.sh | bash -
+  curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot.sh | bash -s "$hostname"
   exit
 EOF
 
-cp squashfs-root/boot/vmlinuz-linux "$ar_inst"/boot/x86_64/vmlinuz-linux
-cp squashfs-root/boot/initramfs-linux.img "$ar_inst"/boot/x86_64/initramfs-linux.img
-cp squashfs-root/boot/initramfs-linux-fallback.img "$ar_inst"/boot/x86_64/initramfs-linux-fallback.img
-cp squashfs-root/boot/memtest86+/memtest.bin "$ar_inst"/boot/memtest
+cp squashfs-root/boot/vmlinuz-linux "$ar_inst"/archraid/boot/x86_64/vmlinuz-linux
+cp squashfs-root/boot/initramfs-linux.img "$ar_inst"/archraid/boot/x86_64/initramfs-linux.img
+cp squashfs-root/boot/initramfs-linux-fallback.img "$ar_inst"/archraid/boot/x86_64/initramfs-linux-fallback.img
+cp squashfs-root/boot/memtest86+/memtest.bin "$ar_inst"/archraid/boot/memtest
 cp squashfs-root/pkglist.txt "$ar_inst"/archraid/pkglist.x86_64.txt
 
 mksquashfs squashfs-root airootfs.sfs -e \
@@ -89,21 +113,21 @@ mksquashfs squashfs-root airootfs.sfs -e \
 
 sha512sum airootfs.sfs > airootfs.sha512
 
-#Realiza instalação adicional de ambiente gráfico
-arch-chroot squashfs-root << EOF
-  curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot-gui.sh | bash -
-  exit
-EOF
-
-cp squashfs-root/pkglist.txt "$ar_inst"/archraid-gui/pkglist.x86_64.txt
-
-#cria novamente imagem compactada do sistema
-mksquashfs squashfs-root "$ar_inst"/archraid-gui/x86_64/airootfs.sfs -e \
-  boot/vmlinuz-linux \
-  boot/initramfs-linux.img \
-  boot/initramfs-linux-fallback.img \
-  boot/memtest86+ \
-  pkglist.txt
-
-sha512sum "$ar_inst"/archraid-gui/x86_64/airootfs.sfs > "$ar_inst"/archraid-gui/x86_64/airootfs.sha512
+##Realiza instalação adicional de ambiente gráfico
+#arch-chroot squashfs-root << EOF
+#  curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot-gui.sh | bash -
+#  exit
+#EOF
+#
+#cp squashfs-root/pkglist.txt "$ar_inst"/archraid-gui/pkglist.x86_64.txt
+#
+##cria novamente imagem compactada do sistema
+#mksquashfs squashfs-root "$ar_inst"/archraid-gui/x86_64/airootfs.sfs -e \
+#  boot/vmlinuz-linux \
+#  boot/initramfs-linux.img \
+#  boot/initramfs-linux-fallback.img \
+#  boot/memtest86+ \
+#  pkglist.txt
+#
+#sha512sum "$ar_inst"/archraid-gui/x86_64/airootfs.sfs > "$ar_inst"/archraid-gui/x86_64/airootfs.sha512
 rm -r squashfs-root

@@ -13,19 +13,60 @@
     yes | pacman -Syu --force archiso linux memtest86+
     yes | pacman -S qemu libvirt ovmf \
        bridge-utils dhcp openssh \
-       samba transmission-cli apache \
+       samba transmission-cli nginx \
        pciutils xfsprogs cups \
        docker docker-compose \
        libnewt \
-       nbd syslinux mkinitcpio-nfs-utils
-    
+       nbd syslinux mkinitcpio-nfs-utils \
+       perl-socket6 perl-net-ssleay
 
+    #pacotes para python2-django-auth-ldap
+    yes | pacman -S python2-django
+
+    #pacotes para websockify (dependência do Webvirtmgr)
+    yes | pacman -S python-numpy
+
+    #pacotes para Webvirtmgr
+    yes | pacman -S libvirt \
+      libvirt-python \
+      qemu \
+      bridge-utils \
+      ebtables \
+      dmidecode \
+      python2-django \
+      python2-lockfile \
+      python2-gunicorn 
+      
     #Instala os pacotes AUR compilados
     for file in /opt/*.pkg.tar.xz; do
-        echo "Instalando $file"
+        echo "Instalando $file";
         yes | pacman -U "$file";
         rm "$file"
     done;
+
+#    #Webvirtmgr python2-django-auth-ldap
+#    yes | pacman -S dmidecode dnsmasq ebtables libvirt-python python2 python2-django python2-gunicorn \
+#     python2-lockfile python2-pip bridge-utils python-distribute python-numpy libvirt-python2 supervisor
+#
+#    #Webvirt depende de QEMU para compilar, sera compilado em ambiente chroot.
+
+
+#    declare -a aurlist=( "websockify" "python2-django-auth-ldap" "webvirtmgr")  &&
+#    for package in ${aurlist[@]}; do
+#        cd /tmp ;
+#        git clone "https://aur.archlinux.org/$package.git" ;
+#        cd "$package" || exit;
+#        chgrp nobody . &&
+#        chmod g+ws . &&
+#        setfacl -m u::rwx,g::rwx . &&
+#        setfacl -d --set u::rwx,g::rwx,o::- . &&
+#        sudo -u nobody makepkg ;
+#        chmod -R 777 /usr/lib/python*
+#        for instPkg in ./*.pkg.tar.xz; do
+#            yes | pacman -U "$instPkg";
+#        done;
+#        chmod -R 755 /usr/lib/python*
+#    done;
 
     #Cria diretórios referente aos serviços de comp. De arquivos
     mkdir -p /share/{Download,Files,Media,ISO,timemachine}
@@ -35,23 +76,30 @@
 
 
 
-    echo "archraid" > /etc/hostname
+    echo "$1" > /etc/hostname
     ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
     hwclock --systohc
     sed -i 's/^#pt_BR.UTF-8/pt_BR.UTF-8/'  /etc/locale.gen
-    echo "LANG=pt_BR.UTF-8" > /etc/locale.conf
+    sed -i 's/^#en_US.UTF-8/en_US.UTF-8/'  /etc/locale.gen
+
+    echo "LANG=en_US.UTF-8" > /etc/locale.conf
     locale-gen
 
     sed -i "s/HOOKS=(base udev/HOOKS=(base udev bcache lvm2 memdisk archiso_shutdown archiso archiso_loop_mnt archiso_pxe_common archiso_pxe_nbd archiso_pxe_http archiso_pxe_nfs archiso_kms/" /etc/mkinitcpio.conf 
     sed -i "s/MODULES=()/MODULES=(bcache vfio vfio_iommu_type1 vfio_pci vfio_virqfd)/" /etc/mkinitcpio.conf
 
-    systemctl enable dhcpcd netatalk samba sshd transmission httpd docker libvirtd webmin
+    systemctl enable dhcpcd netatalk smb avahi-daemon sshd transmission nginx \
+     docker libvirtd webmin supervisord webvirtmgr-novnc
 
     mkdir -p /var/spool/samba/ &&
-    chmod 1777 /var/spool/samba/
+      chmod 1777 /var/spool/samba/
 
-    curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/sh_config/setup_netatalk.sh | bash -
-    curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/sh_config/setup_samba.sh | bash -
+    curl -sL "https://raw.githubusercontent.com/cjuniorfox/archraid/master/sh_config/afp.conf" > /etc/afp.conf
+
+
+    mkdir -p /var/spool/samba/ &&
+      chmod 1777 /var/spool/samba/ &&
+      curl -sL "https://raw.githubusercontent.com/cjuniorfox/archraid/master/sh_config/smb.conf" > /etc/smb.conf
 
     mkinitcpio -p linux;
     LANG=C pacman -Sl | awk '/\[installed\]$/ {print $1 "/" $2 "-" $3}' > /pkglist.txt;
