@@ -101,6 +101,8 @@
       chmod 1777 /var/spool/samba/ &&
       curl -sL "https://raw.githubusercontent.com/cjuniorfox/archraid/master/sh_config/smb.conf" > /etc/smb.conf
 
+    curl -sL "https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot-gui.sh" | bash -
+
     mkinitcpio -p linux;
     LANG=C pacman -Sl | awk '/\[installed\]$/ {print $1 "/" $2 "-" $3}' > /pkglist.txt;
     yes | pacman -Scc;
