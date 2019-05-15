@@ -21,10 +21,10 @@
        perl-socket6 perl-net-ssleay
 
     #pacotes para python2-django-auth-ldap
-    yes | pacman -S python2-django
+#    yes | pacman -S python2-django
 
     #pacotes para websockify (dependência do Webvirtmgr)
-    yes | pacman -S python-numpy
+#    yes | pacman -S python-numpy
 
     #pacotes para Webvirtmgr
     yes | pacman -S libvirt \
@@ -32,10 +32,10 @@
       qemu \
       bridge-utils \
       ebtables \
-      dmidecode \
-      python2-django \
-      python2-lockfile \
-      python2-gunicorn 
+      dmidecode #\
+#      python2-django \
+#      python2-lockfile \
+#      python2-gunicorn 
       
     #Instala os pacotes AUR compilados
     for file in /opt/*.pkg.tar.xz; do
@@ -71,8 +71,8 @@
     #Cria diretórios referente aos serviços de comp. De arquivos
     mkdir -p /share/{Download,Files,Media,ISO,timemachine}
     groupadd network
-    chgrp network /share/{Download,Files,Media,ISO,timemachine}
-    chmod -R 770 /share/{Download,Files,Media,ISO,timemachine}
+    chgrp network /share/{Download,Games,Files,Media,ISO,timemachine}
+    chmod -R 770 /share/{Download,Games,Files,Media,ISO,timemachine}
 
 
 
