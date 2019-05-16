@@ -61,13 +61,14 @@ yes | mkfs.ext4 ${disk}4 -L cow ;
 mount ${disk}2 $ar_inst/mnt/efi &&
 mount ${disk}3 $ar_inst/mnt/image ;
 
-mkdir -p $ar_inst/mnt/image/{boot/{x86_64,grub},archraid/x86_64,archraid-gui/x86_64} ;
+mkdir -p $ar_inst/mnt/image/{boot/grub,archraid/x86_64} ;
 
 #File to load archraid boot
 touch $ar_inst/mnt/image/ARCHRAID ;
 
 echo "Copying files to block device";
 cp -rv "$ar_inst"/archraid/* "$ar_inst"/mnt/image/archraid/ &&
+cp -rv "$ar_inst"/boot/* "$ar_inst"/mnt/image/boot/
 #cp -rv "$ar_inst"/archraid-gui/* "$ar_inst"/mnt/image/archraid-gui/
 #cp -v $ar_inst/archraid/x86_64/{airootfs.sfs,airootfs.sha512} $ar_inst/mnt/image/archraid/x86_64/ ;
 #cp -v $ar_inst/archraid/boot/x86_64/{vmlinuz-linux,initramfs-linux.img,initramfs-linux-fallback.img} $ar_inst/mnt/image/boot/x86_64/ ;
@@ -81,15 +82,15 @@ insmod all_video
 set default="0"
 set timeout=5
 menuentry "ArchRaid x86_64 USB" {
-    linux /archraid/boot/x86_64/vmlinuz-linux archisobasedir=archraid archisolabel=$label cow_label=cow intel_iommu=on
-    initrd /archraid/boot/x86_64/initramfs-linux.img
+    linux /boot/x86_64/vmlinuz-linux rw archisobasedir=archraid archisolabel=$label cow_label=cow intel_iommu=on
+    initrd /boot/x86_64/initramfs-linux.img
 }
 menuentry "ArchRaid x86_64 USB (fallback)" {
-    linux /archraid/boot/x86_64/vmlinuz-linux archisobasedir=archraid archisolabel=$label cow_label=cow intel_iommu=on
-    initrd /archraid/boot/x86_64/initramfs-linux-fallback.img
+    linux /boot/x86_64/vmlinuz-linux rw archisobasedir=archraid archisolabel=$label cow_label=cow intel_iommu=on
+    initrd /boot/x86_64/initramfs-linux-fallback.img
 }
 menuentry "Run Memtest86+" {
-    linux /archraid/boot/memtest
+    linux /boot/memtest
 }
 EOF
 

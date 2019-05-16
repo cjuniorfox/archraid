@@ -110,8 +110,8 @@ ln -sf /run/archiso/bootmnt/boot/x86_64/initramfs-linux-fallback.img "$ar_inst"/
 
 
 mksquashfs \
-  boot \
-  teste/{bin,dev,etc,home,lib,lib64,mnt,opt,proc,root,run,sbin,srv,sys,tmp,usr,var} \
+  "$ar_inst"/boot \
+  squashfs-root/{bin,dev,etc,home,lib,lib64,mnt,opt,proc,root,run,sbin,srv,sys,tmp,usr,var,share} \
   filesystem.sfs
 
 #mksquashfs squashfs-root airootfs.sfs -e \
