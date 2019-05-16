@@ -88,8 +88,9 @@
     sed -i "s/HOOKS=(base udev/HOOKS=(base udev bcache lvm2 memdisk archiso_shutdown archiso archiso_loop_mnt archiso_pxe_common archiso_pxe_nbd archiso_pxe_http archiso_pxe_nfs archiso_kms/" /etc/mkinitcpio.conf 
     sed -i "s/MODULES=()/MODULES=(bcache vfio vfio_iommu_type1 vfio_pci vfio_virqfd)/" /etc/mkinitcpio.conf
 
-    systemctl enable dhcpcd netatalk smb avahi-daemon sshd transmission nginx \
-     docker libvirtd webmin supervisord webvirtmgr-novnc
+    systemctl enable dhcpcd NetworkManager \
+     netatalk smb avahi-daemon sshd transmission nginx \
+     docker libvirtd webmin supervisord
 
     mkdir -p /var/spool/samba/ &&
       chmod 1777 /var/spool/samba/
