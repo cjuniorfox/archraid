@@ -50,7 +50,7 @@ yes | pacman -S python2-pip
 
 
 #Compila dependências AUR
-declare -a aurlist=("perl-authen-pam" "perl-encode-detect" "websockify" "python2-django-auth-ldap")  &&
+declare -a aurlist=("perl-authen-pam" "perl-encode-detect")  &&
 for package in ${aurlist[@]}; do
     cd /tmp ;
     git clone "https://aur.archlinux.org/$package.git" ;
