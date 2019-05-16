@@ -5,6 +5,6 @@
   	openbox  gnome-terminal \
   	
 #  systemctl enable xdm.service
-  echo ‘exec openbox-session’ > ~/.xinitrc
+  echo "exec openbox-session" > ~/.xinitrc
   LANG=C pacman -Sl | awk '/\[installed\]$/ {print $1 "/" $2 "-" $3}' > /pkglist.txt
   yes | pacman -Scc
