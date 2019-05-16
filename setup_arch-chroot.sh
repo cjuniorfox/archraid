@@ -18,7 +18,8 @@
        docker docker-compose \
        libnewt \
        nbd syslinux mkinitcpio-nfs-utils \
-       perl-socket6 perl-net-ssleay
+       perl-socket6 perl-net-ssleay \
+       vim
 
     #pacotes para python2-django-auth-ldap
 #    yes | pacman -S python2-django
@@ -86,7 +87,7 @@
     locale-gen
 
     sed -i "s/HOOKS=(base udev/HOOKS=(base udev bcache lvm2 memdisk archiso_shutdown archiso archiso_loop_mnt archiso_pxe_common archiso_pxe_nbd archiso_pxe_http archiso_pxe_nfs archiso_kms/" /etc/mkinitcpio.conf 
-    sed -i "s/MODULES=()/MODULES=(bcache vfio vfio_iommu_type1 vfio_pci vfio_virqfd)/" /etc/mkinitcpio.conf
+    sed -i "s/MODULES=()/MODULES=(bcache xfs xhci-hcd vfio vfio_iommu_type1 vfio_pci vfio_virqfd)/" /etc/mkinitcpio.conf
 
     systemctl enable dhcpcd NetworkManager \
      netatalk smb avahi-daemon sshd transmission nginx \

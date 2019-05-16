@@ -30,7 +30,7 @@ curl -s "https://www.archlinux.org/mirrorlist/?country=$country&protocol=http&pr
 echo -e "\ny" | pacman -Sy --force base-devel perl-module-build perl-net-ssleay avahi python2 dbus-glib python2-dbus git \
   squashfs-tools
 
-mkdir -p "$ar_inst"/{archraid,archraid-gui}/{x86_64,boot/x86_64}
+mkdir -p "$ar_inst"/{archraid/x86_64,boot/x86_64}
 
 cd  "$ar_inst"/archraid/x86_64/
 
@@ -98,18 +98,28 @@ arch-chroot squashfs-root << EOF
   exit
 EOF
 
-cp squashfs-root/boot/vmlinuz-linux "$ar_inst"/archraid/boot/x86_64/vmlinuz-linux
-cp squashfs-root/boot/initramfs-linux.img "$ar_inst"/archraid/boot/x86_64/initramfs-linux.img
-cp squashfs-root/boot/initramfs-linux-fallback.img "$ar_inst"/archraid/boot/x86_64/initramfs-linux-fallback.img
-cp squashfs-root/boot/memtest86+/memtest.bin "$ar_inst"/archraid/boot/memtest
+cp squashfs-root/boot/vmlinuz-linux "$ar_inst"/boot/x86_64/vmlinuz-linux
+cp squashfs-root/boot/initramfs-linux.img "$ar_inst"/boot/x86_64/initramfs-linux.img
+cp squashfs-root/boot/initramfs-linux-fallback.img "$ar_inst"/boot/x86_64/initramfs-linux-fallback.img
+cp squashfs-root/boot/memtest86+/memtest.bin "$ar_inst"/boot/memtest
 cp squashfs-root/pkglist.txt "$ar_inst"/archraid/pkglist.x86_64.txt
 
-mksquashfs squashfs-root airootfs.sfs -e \
-  boot/vmlinuz-linux \
-  boot/initramfs-linux.img \
-  boot/initramfs-linux-fallback.img \
-  boot/memtest86+ \
-  pkglist.txt
+ln -sf /run/archiso/bootmnt/boot/x86_64/vmlinuz-linux "$ar_inst"/boot/vmlinuz-linux
+ln -sf /run/archiso/bootmnt/boot/x86_64/initramfs-linux.img "$ar_inst"/boot/initramfs-linux.img
+ln -sf /run/archiso/bootmnt/boot/x86_64/initramfs-linux-fallback.img "$ar_inst"/boot/initramfs-linux-fallback.img
+
+
+mksquashfs \
+  boot \
+  teste/{bin,dev,etc,home,lib,lib64,mnt,opt,proc,root,run,sbin,srv,sys,tmp,usr,var} \
+  filesystem.sfs
+
+#mksquashfs squashfs-root airootfs.sfs -e \
+#  boot/vmlinuz-linux \
+#  boot/initramfs-linux.img \
+#  boot/initramfs-linux-fallback.img \
+#  boot/memtest86+ \
+#  pkglist.txt
 
 sha512sum airootfs.sfs > airootfs.sha512
 
