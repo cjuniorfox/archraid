@@ -11,7 +11,8 @@
     sed -i  s/CheckSpace/\#CheckSpace/ /etc/pacman.conf
 
     yes | pacman -Syu --force archiso linux memtest86+
-    yes | pacman -S qemu libvirt ovmf \
+    yes | pacman -S fuse3 \
+       qemu libvirt ovmf \
        bridge-utils openssh networkmanager \
        samba transmission-cli nginx \
        pciutils xfsprogs cups \
