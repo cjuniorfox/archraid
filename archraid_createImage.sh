@@ -98,10 +98,10 @@ arch-chroot squashfs-root << EOF
   exit
 EOF
 
-cp squashfs-root/boot/vmlinuz-linux                 "$ar_inst"/boot/x86_64/vmlinuz-linux
-cp squashfs-root/boot/initramfs-linux.img           "$ar_inst"/boot/x86_64/initramfs-linux.img
-cp squashfs-root/boot/initramfs-linux-fallback.img  "$ar_inst"/boot/x86_64/initramfs-linux-fallback.img
-cp squashfs-root/boot/memtest86+/memtest.bin        "$ar_inst"/boot/memtest
+cp squashfs-root/boot/vmlinuz-linux                 "$ar_inst"/archraid/boot/x86_64/vmlinuz-linux
+cp squashfs-root/boot/initramfs-linux.img           "$ar_inst"/archraid/boot/x86_64/initramfs-linux.img
+cp squashfs-root/boot/initramfs-linux-fallback.img  "$ar_inst"/archraid/boot/x86_64/initramfs-linux-fallback.img
+cp squashfs-root/boot/memtest86+/memtest.bin        "$ar_inst"/archraid/boot/memtest
 cp squashfs-root/pkglist.txt                        "$ar_inst"/archraid/pkglist.x86_64.txt
 
 ln -sf /run/archiso/bootmnt/boot/x86_64/vmlinuz-linux                 boot/vmlinuz-linux
