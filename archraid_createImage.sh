@@ -98,19 +98,19 @@ arch-chroot squashfs-root << EOF
   exit
 EOF
 
-cp squashfs-root/boot/vmlinuz-linux "$ar_inst"/boot/x86_64/vmlinuz-linux
-cp squashfs-root/boot/initramfs-linux.img "$ar_inst"/boot/x86_64/initramfs-linux.img
-cp squashfs-root/boot/initramfs-linux-fallback.img "$ar_inst"/boot/x86_64/initramfs-linux-fallback.img
-cp squashfs-root/boot/memtest86+/memtest.bin "$ar_inst"/boot/memtest
-cp squashfs-root/pkglist.txt "$ar_inst"/archraid/pkglist.x86_64.txt
+cp squashfs-root/boot/vmlinuz-linux                 boot/x86_64/vmlinuz-linux
+cp squashfs-root/boot/initramfs-linux.img           boot/x86_64/initramfs-linux.img
+cp squashfs-root/boot/initramfs-linux-fallback.img  boot/x86_64/initramfs-linux-fallback.img
+cp squashfs-root/boot/memtest86+/memtest.bin        boot/memtest
+cp squashfs-root/pkglist.txt                        "$ar_inst"/archraid/pkglist.x86_64.txt
 
-ln -sf /run/archiso/bootmnt/boot/x86_64/vmlinuz-linux "$ar_inst"/boot/x86_64/vmlinuz-linux
-ln -sf /run/archiso/bootmnt/boot/x86_64/initramfs-linux.img "$ar_inst"/boot/x86_64/initramfs-linux.img
-ln -sf /run/archiso/bootmnt/boot/x86_64/initramfs-linux-fallback.img "$ar_inst"/boot/x86_64/initramfs-linux-fallback.img
+ln -sf /run/archiso/bootmnt/boot/x86_64/vmlinuz-linux                 "$ar_inst"/boot/x86_64/vmlinuz-linux
+ln -sf /run/archiso/bootmnt/boot/x86_64/initramfs-linux.img           "$ar_inst"/boot/x86_64/initramfs-linux.img
+ln -sf /run/archiso/bootmnt/boot/x86_64/initramfs-linux-fallback.img  "$ar_inst"/boot/x86_64/initramfs-linux-fallback.img
 
 
 mksquashfs \
-  "$ar_inst"/boot \
+  boot \
   squashfs-root/{bin,dev,etc,home,lib,lib64,mnt,opt,proc,root,run,sbin,srv,sys,tmp,usr,var,share} \
   airootfs.sfs
 
@@ -140,4 +140,4 @@ sha512sum airootfs.sfs > airootfs.sha512
 #  pkglist.txt
 #
 #sha512sum "$ar_inst"/archraid-gui/x86_64/airootfs.sfs > "$ar_inst"/archraid-gui/x86_64/airootfs.sha512
-rm -r squashfs-root
+rm -r {boot,squashfs-root}
