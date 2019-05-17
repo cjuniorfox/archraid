@@ -82,11 +82,11 @@ insmod all_video
 set default="0"
 set timeout=5
 menuentry "ArchRaid x86_64 USB" {
-    linux /boot/x86_64/vmlinuz-linux rw archisobasedir=archraid archisolabel=$label cow_label=cow intel_iommu=on
+    linux /boot/x86_64/vmlinuz-linux earlymodules=xhci_hcd modules-load=xhci_hcd archisobasedir=archraid archisolabel=$label cow_label=cow intel_iommu=on
     initrd /boot/x86_64/initramfs-linux.img
 }
 menuentry "ArchRaid x86_64 USB (fallback)" {
-    linux /boot/x86_64/vmlinuz-linux rw archisobasedir=archraid archisolabel=$label cow_label=cow intel_iommu=on
+    linux /boot/x86_64/vmlinuz-linux earlymodules=xhci_hcd modules-load=xhci_hcd archisobasedir=archraid archisolabel=$label cow_label=cow intel_iommu=on
     initrd /boot/x86_64/initramfs-linux-fallback.img
 }
 menuentry "Run Memtest86+" {
