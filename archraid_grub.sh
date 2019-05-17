@@ -67,8 +67,8 @@ mkdir -p $ar_inst/mnt/image/{boot/grub,archraid/x86_64} ;
 touch $ar_inst/mnt/image/ARCHRAID ;
 
 echo "Copying files to block device";
-cp -rv "$ar_inst"/archraid/* "$ar_inst"/mnt/image/archraid/ &&
-cp -rv "$ar_inst"/boot/* "$ar_inst"/mnt/image/boot/
+cp -rv "$ar_inst"/archraid/x86_64/{airootfs.sfs,airootfs.sha512} "$ar_inst"/mnt/image/archraid/ &&
+cp -rv "$ar_inst"/archraid/x86_64/boot/* "$ar_inst"/mnt/image/boot/
 #cp -rv "$ar_inst"/archraid-gui/* "$ar_inst"/mnt/image/archraid-gui/
 #cp -v $ar_inst/archraid/x86_64/{airootfs.sfs,airootfs.sha512} $ar_inst/mnt/image/archraid/x86_64/ ;
 #cp -v $ar_inst/archraid/boot/x86_64/{vmlinuz-linux,initramfs-linux.img,initramfs-linux-fallback.img} $ar_inst/mnt/image/boot/x86_64/ ;
