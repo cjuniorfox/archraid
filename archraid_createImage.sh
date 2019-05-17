@@ -68,7 +68,7 @@ for package in ${aurlist[@]}; do
 done;
 
 #compilar pacotes AUR
-declare -a aurlist=("perl-authen-pam" "perl-encode-detect" "webmin" \
+declare -a aurlist=("mergerfs" "perl-authen-pam" "perl-encode-detect" "webmin" \
  "mergerfs" "snapraid" "netatalk" "bcache-tools" \
  "websockify" "python2-django-auth-ldap" "webvirtmgr-git" ) &&
 for package in ${aurlist[@]}; do
