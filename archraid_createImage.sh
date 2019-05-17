@@ -30,7 +30,7 @@ curl -s "https://www.archlinux.org/mirrorlist/?country=$country&protocol=http&pr
 echo -e "\ny" | pacman -Sy --force base-devel perl-module-build perl-net-ssleay avahi python2 dbus-glib python2-dbus git \
   squashfs-tools
 
-mkdir -p "$ar_inst"/archraid/{boot,x86_64/boot/x86_64}
+mkdir -p "$ar_inst"/archraid/{boot/x86_64,x86_64/boot}
 
 cd  "$ar_inst"/archraid/x86_64/
 
