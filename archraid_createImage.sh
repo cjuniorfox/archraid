@@ -49,7 +49,7 @@ yes | pacman -S python-distribute
 #yes | pacman -S python2-pip
 
 #pacotes para build OVMF
-yes |  pacman -S iasl nasm perl-libwww python2 subversion
+#yes |  pacman -S iasl nasm perl-libwww python2 subversion
 
 
 #Compila dependências AUR
@@ -72,8 +72,7 @@ done;
 
 #compilar pacotes AUR
 declare -a aurlist=("mergerfs" "perl-authen-pam" "perl-encode-detect" "webmin" \
- "mergerfs" "snapraid" "netatalk" "bcache-tools" \
- "ovmf-git" ) &&
+ "mergerfs" "snapraid" "netatalk" "bcache-tools" ) &&
 for package in ${aurlist[@]}; do
     cd /tmp ;
     git clone "https://aur.archlinux.org/$package.git" ;
