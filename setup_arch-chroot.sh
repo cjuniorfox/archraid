@@ -87,7 +87,7 @@
     echo "LANG=en_US.UTF-8" > /etc/locale.conf
     locale-gen
 
-    sed -i "s/HOOKS=(base udev/HOOKS=(base udev bcache lvm2 memdisk archiso_shutdown archiso archiso_loop_mnt archiso_pxe_common archiso_pxe_nbd archiso_pxe_http archiso_pxe_nfs archiso_kms/" /etc/mkinitcpio.conf 
+    sed -i "s/HOOKS=(base udev/HOOKS=(base udev bcache lvm2 memdisk archiso_shutdown archiso archiso_loop_mnt archiso_pxe_common archiso_pxe_nbd archiso_pxe_http archiso_pxe_nfs archiso_kms modconf/" /etc/mkinitcpio.conf 
     sed -i "s/MODULES=()/MODULES=(bcache vfat squashfs ext4 xfs dm_mod xhci-hcd vfio vfio_iommu_type1 vfio_pci vfio_virqfd)/" /etc/mkinitcpio.conf
 
     systemctl enable NetworkManager \
@@ -99,7 +99,12 @@
 
     curl -sL "https://raw.githubusercontent.com/cjuniorfox/archraid/master/sh_config/afp.conf" > /etc/afp.conf
 
-
+    #Setting-up OVMF (UEFI)
+    cat << EOF >> /etc/libvirt/qemu.conf
+nvram = [
+  "/usr/share/ovmf/x64/ovmf_x64.bin:/usr/share/ovmf/x64/ovmf_vars_x64.bin"
+]
+EOF
     mkdir -p /var/spool/samba/ &&
       chmod 1777 /var/spool/samba/ &&
       curl -sL "https://raw.githubusercontent.com/cjuniorfox/archraid/master/sh_config/smb.conf" > /etc/smb.conf

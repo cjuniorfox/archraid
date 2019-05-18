@@ -46,7 +46,10 @@ pacstrap squashfs-root base archiso zsh
 yes | pacman -S python-distribute
 
 #Pacote para build webvirtmgr
-yes | pacman -S python2-pip
+#yes | pacman -S python2-pip
+
+#pacotes para build OVMF
+yes |  pacman -S iasl nasm perl-libwww python2 subversion
 
 
 #Compila dependências AUR
@@ -70,7 +73,7 @@ done;
 #compilar pacotes AUR
 declare -a aurlist=("mergerfs" "perl-authen-pam" "perl-encode-detect" "webmin" \
  "mergerfs" "snapraid" "netatalk" "bcache-tools" \
- "websockify" "python2-django-auth-ldap" "webvirtmgr-git" ) &&
+ "ovmf-git" ) &&
 for package in ${aurlist[@]}; do
     cd /tmp ;
     git clone "https://aur.archlinux.org/$package.git" ;
