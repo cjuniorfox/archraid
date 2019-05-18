@@ -1,6 +1,6 @@
 #!/bin/bash
 
-    chsh -s /bin/zsh 
+    #chsh -s /bin/zsh 
 
     pacman-key --init &&
     pacman-key --populate archlinux
