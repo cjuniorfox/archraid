@@ -27,8 +27,9 @@ curl -s "https://www.archlinux.org/mirrorlist/?country=$country&protocol=http&pr
    sed -e 's/^#Server/Server/' -e '/^#/d' |
    rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
 
-echo -e "\ny" | pacman -Sy --force base-devel perl-module-build perl-net-ssleay avahi python2 dbus-glib python2-dbus git \
-  squashfs-tools
+echo -e "\ny" | pacman -Sy --force base-devel make \
+  perl-module-build perl-net-ssleay avahi python2 dbus-glib python2-dbus git \
+  squashfs-tools 
 
 mkdir -p "$ar_inst"/archraid/{boot/x86_64,x86_64/boot}
 
