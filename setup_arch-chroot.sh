@@ -94,7 +94,7 @@
 
     systemctl enable NetworkManager \
      netatalk smb avahi-daemon sshd transmission nginx \
-     docker libvirtd webmin supervisord
+     docker libvirtd virtlogd webmin supervisord
 
     mkdir -p /var/spool/samba/ &&
       chmod 1777 /var/spool/samba/
@@ -104,7 +104,7 @@
     #Setting-up OVMF (UEFI)
     cat << EOF >> /etc/libvirt/qemu.conf
 nvram = [
-  "/usr/share/ovmf/x64/ovmf_x64.bin:/usr/share/ovmf/x64/ovmf_vars_x64.bin"
+  "/usr/share/ovmf/x64/ovmf_x64.bin:/usr/share/ovmf/ovmf_vars_x64.bin"
 ]
 EOF
     mkdir -p /var/spool/samba/ &&
