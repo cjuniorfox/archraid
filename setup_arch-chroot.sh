@@ -11,7 +11,7 @@
     sed -i  s/CheckSpace/\#CheckSpace/ /etc/pacman.conf
 
     yes | pacman -Syu --force archiso linux memtest86+
-    yes | pacman -S fuse3 \
+    yes | pacman -S fuse3 sudo \
        qemu libvirt ovmf \
        bridge-utils openssh networkmanager \
        samba transmission-cli nginx \
@@ -80,6 +80,8 @@
 
     echo "$1" > /etc/hostname
     ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+    chmod +w /etc/sudoers
+    sed -i "s/# %sudo/%sudo/" /etc/sudoers
     hwclock --systohc
     sed -i 's/^#pt_BR.UTF-8/pt_BR.UTF-8/'  /etc/locale.gen
     sed -i 's/^#en_US.UTF-8/en_US.UTF-8/'  /etc/locale.gen
