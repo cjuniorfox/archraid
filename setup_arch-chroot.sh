@@ -33,37 +33,31 @@ sed -i "s/# %sudo/%sudo/" /etc/sudoers
 
 echo "___aur ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-#Instala aurman
+#Installing yay for AUR packages
 for file in /opt/*.pkg.tar.xz; do
     echo "Instalando $file";
     pacman -U --noconfirm "$file" &&
     rm "$file"
 done;
-
+#Installing aur packages
 useradd -ms /bin/bash ___aur
-
 usermod -aG sudo ___aur
-
-sudo -u ___aur yay -S bcache-tools mergerfs webmin webvirtmgr-git netatalk --noconfirm
-
+sudo -u ___aur yay -S bcache-tools snapraid mergerfs webmin webvirtmgr-git netatalk --noconfirm
 userdel ___aur;
 sed -i "s/___aur ALL=(ALL) NOPASSWD: ALL//" /etc/sudoers
 rm -r /home/___aur
 
-
+#Configuration of webvirtmgr
 systemctl enable supervisord
-# systemctl start supervisord
-
 #To access VNC console you need to enable the NoVNC proxy.
 systemctl enable webvirtmgr-novnc
-# systemctl start webvirtmgr-novnc
-
 #Configure nginx to proxy webvirtmgr
 mkdir /etc/nginx/sites-{available,enabled} 
 sed -i 's/^    server/    include sites-enabled\/*;\n    server/g' /etc/nginx/nginx.conf
-
 cp /etc/nginx/conf.d/webvirtmgr.nginx.conf.sample /etc/nginx/sites-available/webvirtmgr &&
   ln -s /etc/nginx/sites-available/webvirtmgr /etc/nginx/sites-enabled/webvirtmgr
+#webvirtmgr authentication
+sed -i "s/#auth_unix_rw/auth_unix_rw/" /etc/libvirt/libvirtd.conf
 
 #Cria diretórios referente aos serviços de comp. De arquivos
 mkdir -p /share/{Download,Files,Media,ISO,timemachine}
