@@ -11,8 +11,8 @@ locale-gen
 
 sed -i  s/CheckSpace/\#CheckSpace/ /etc/pacman.conf
 
-yes | pacman -Syu --force archiso linux memtest86+
-yes | pacman -S fuse3 sudo \
+pacman -Syu --force --noconfirm archiso linux memtest86+ \
+   fuse3 sudo \
    qemu libvirt ovmf \
    bridge-utils openssh networkmanager dnsmasq \
    samba transmission-cli nginx \
@@ -22,10 +22,10 @@ yes | pacman -S fuse3 sudo \
    nbd syslinux mkinitcpio-nfs-utils \
    perl-socket6 perl-net-ssleay \
    vim \
-   base-devel git make
+   base-devel git make go
 
 #Dependência para webvirtmgr
-yes | pacman -S libvirt-python2
+pacman -S libvirt-python2 --noconfirm
 
 groupadd sudo
 chmod +w /etc/sudoers
@@ -36,7 +36,7 @@ echo "___aur ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 #Instala aurman
 for file in /opt/*.pkg.tar.xz; do
     echo "Instalando $file";
-    yes | pacman -U "$file" #&&
+    yes | pacman -U "$file" &&
     rm "$file"
 done;
 
@@ -50,9 +50,6 @@ userdel ___aur;
 sed -i "s/___aur ALL=(ALL) NOPASSWD: ALL//" /etc/sudoers
 rm -r /home/___aur
 
-echo -e "yes\n\nsenha123\nsenha123" | PYTHONPATH=/usr/lib/webvirtmgr/lib python2 /usr/lib/webvirtmgr/manage.py syncdb
-chown webvirtmgr:webvirtmgr /usr/lib/webvirtmgr/webvirtmgr/local/.secret_key_store /usr/lib/webvirtmgr/webvirtmgr.sqlite3 /usr/lib/webvirtmgr # temporary, see https://github.com/retspen/webvirtmgr/issues/391
-echo -e "yes\n" | PYTHONPATH=/usr/lib/webvirtmgr/lib python2 /usr/lib/webvirtmgr/manage.py collectstatic
 
 systemctl enable supervisord
 # systemctl start supervisord
@@ -104,3 +101,13 @@ curl -sL "https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arc
 mkinitcpio -p linux;
 LANG=C pacman -Sl | awk '/\[installed\]$/ {print $1 "/" $2 "-" $3}' > /pkglist.txt;
 yay -Scc --noconfirm;
+
+#########################################################################################################################################################################################################################
+# Webvirtmgr. After instal, run this post installation commands:
+#
+#  PYTHONPATH=/usr/lib/webvirtmgr/lib python2 /usr/lib/webvirtmgr/manage.py syncdb
+#  chown webvirtmgr:webvirtmgr /usr/lib/webvirtmgr/webvirtmgr/local/.secret_key_store /usr/lib/webvirtmgr/webvirtmgr.sqlite3 /usr/lib/webvirtmgr # temporary, see https://github.com/retspen/webvirtmgr/issues/391
+#  PYTHONPATH=/usr/lib/webvirtmgr/lib python2 /usr/lib/webvirtmgr/manage.py collectstatic
+#
+#
+#

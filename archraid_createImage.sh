@@ -27,10 +27,7 @@ curl -s "https://www.archlinux.org/mirrorlist/?country=$country&protocol=http&pr
    sed -e 's/^#Server/Server/' -e '/^#/d' |
    rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
 
-
-
-echo -e "\ny" | pacman -Sy --force base-devel git make squashfs-tools  #\
-#  perl-module-build perl-net-ssleay avahi python2 dbus-glib python2-dbus git \
+pacman -Sy --force --noconfirm base-devel git make squashfs-tools
 
 mkdir -p "$ar_inst"/archraid/{boot/x86_64,x86_64/boot}
 
@@ -49,25 +46,26 @@ yes | pacman -S \
   pyalpm \
   python-feedparser
 
-useradd __aur -m -s /bin/bash 
+useradd ___aur -ms /bin/bash 
 #key from aurman
-sudo -u __aur gpg --recv-keys 465022E743D71E39
+#sudo -u ___aur gpg --recv-keys 465022E743D71E39
+pacman -S go --noconfirm
 declare -a aurlist=("yay") &&
 for package in ${aurlist[@]}; do
     cd /tmp ;
     git clone "https://aur.archlinux.org/$package.git" ;
     cd "$package" || exit;
-    chgrp __aur . &&
+    chgrp ___aur . &&
     chmod g+ws . &&
     setfacl -m u::rwx,g::rwx . &&
     setfacl -d --set u::rwx,g::rwx,o::- . &&
-    sudo -u __aur makepkg -d;
+    sudo -u ___aur makepkg -d;
     for instPkg in ./*.pkg.tar.xz; do
         cp "$instPkg" "$ar_inst"/archraid/x86_64/squashfs-root/opt/;
     done;
 done;
 
-userdel __aur;
+userdel ___aur;
 
 cd  "$ar_inst"/archraid/x86_64/
 
