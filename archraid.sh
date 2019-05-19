@@ -84,12 +84,4 @@ ln -sf /run/archiso/bootmnt/boot/x86_64/vmlinuz-linux                 boot/vmlin
 ln -sf /run/archiso/bootmnt/boot/x86_64/initramfs-linux.img           boot/initramfs-linux.img
 ln -sf /run/archiso/bootmnt/boot/x86_64/initramfs-linux-fallback.img  boot/initramfs-linux-fallback.img
 
-
-mksquashfs \
-  boot \
-  squashfs-root/{bin,dev,etc,home,lib,lib64,mnt,opt,proc,root,run,sbin,srv,sys,tmp,usr,var,share} \
-  airootfs.sfs
-
-sha512sum airootfs.sfs > airootfs.sha512
-
-rm -r {boot,squashfs-root}
+#rm -r {boot,squashfs-root}
