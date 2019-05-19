@@ -87,9 +87,8 @@ nvram = [
 ]
 EOF
 mkdir -p /var/spool/samba/ &&
-  mkdir -p /etc/config
   chmod 1777 /var/spool/samba/ &&
-  curl -sL "https://raw.githubusercontent.com/cjuniorfox/archraid/master/sh_config/smb.conf" > /etc/config/smb.conf
+  curl -sL "https://raw.githubusercontent.com/cjuniorfox/archraid/master/sh_config/smb.conf" > /etc/samba/smb.conf
 
 curl -sL "https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot-gui.sh" | bash -
 
