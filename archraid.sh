@@ -1,85 +1,95 @@
 #!/bin/bash
-#aumentando espaço live
-mount -o remount,size=3G /run/archiso/cowspace
+mount -o remount,size=3G /run/archiso/cowspace;
+if [ -z $ar_inst ]; then
+	ar_inst=$(whiptail --inputbox --title "ArchRAID" "Input archraid chroot installation directory" 8 50 3>&1 1>&2 2>&3)
+	if [ -z "$ar_inst" ]; then 
+        	exit;
+    fi;
+fi;
+
+if [ -z $country ]; then
+	country=$(whiptail --inputbox --title "ArchRAID" "Input your country for Pacman's repository" 8 50 3>&1 1>&2 2>&3)
+	if [ -z "$country" ]; then 
+  			exit;
+  	fi;
+fi;
+
+if [ -z $hostname ]; then
+  hostname=$(whiptail --inputbox --title "ArchRAID" "Input your desired hostname" 8 50 3>&1 1>&2 2>&3)
+  if [ -z "$hostname" ]; then 
+        exit;
+    fi;
+fi;
 
 yes | pacman -Sy pacman-contrib
 #cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-curl -s "https://www.archlinux.org/mirrorlist/?country=BR&protocol=http&protocol=https&ip_version=4&use_mirror_status=on" |
+curl -s "https://www.archlinux.org/mirrorlist/?country=$country&protocol=http&protocol=https&ip_version=4&use_mirror_status=on" |
    sed -e 's/^#Server/Server/' -e '/^#/d' |
    rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
 
-#instalar pacotes pacman necessários para compilação
-# [perl-encode-detect] - perl-module-build
-# [Webmin]   - perl-net-ssleay 
-# [Netatalk] - avahi python2 dbus-glib python2-dbus
-echo -e "\ny" | pacman -S --force base-devel perl-module-build perl-net-ssleay avahi python2 dbus-glib python2-dbus git \
-  squashfs-tools
+pacman -Sy --force --noconfirm base-devel git make squashfs-tools
 
-#Extrai ArchISO
-mkdir /mnt/archiso
-mount /dev/cdrom /mnt/archiso
-cp -a /mnt/archiso ~/customiso
-cd ~/customiso/x86_64
-unsquashfs airootfs.sfs
-rm  ./airootfs.sfs
-cp ../boot/x86_64/vmlinuz squashfs-root/boot/vmlinuz-linux
-cp /etc/pacman.d/mirrorlist ./squashfs-root/etc/pacman.d/mirrorlist
+mkdir -p "$ar_inst"/archraid/{boot/x86_64,x86_64/boot}
 
+cd  "$ar_inst"/archraid/x86_64/
 
-#Compila dependências AUR
-declare -a aurlist=("perl-authen-pam" "perl-encode-detect")  &&
+mkdir squashfs-root
+
+pacstrap squashfs-root base archiso
+
+#Baixa e compila o AURMAN (equivalente ao pacman para pacotes AUR)
+yes | pacman -S \
+  expac \
+  python-requests \
+  python-regex \
+  python-dateutil \
+  pyalpm \
+  python-feedparser
+
+useradd ___aur -ms /bin/bash 
+#key from aurman
+#sudo -u ___aur gpg --recv-keys 465022E743D71E39
+pacman -S go --noconfirm
+declare -a aurlist=("yay") &&
 for package in ${aurlist[@]}; do
-    cd /tmp
-    git clone "https://aur.archlinux.org/$package.git"
+    cd /tmp ;
+    git clone "https://aur.archlinux.org/$package.git" ;
     cd "$package" || exit;
-    chgrp nobody . &&
+    chgrp ___aur . &&
     chmod g+ws . &&
     setfacl -m u::rwx,g::rwx . &&
     setfacl -d --set u::rwx,g::rwx,o::- . &&
-    sudo -u nobody makepkg &&
+    sudo -u ___aur makepkg -d;
     for instPkg in ./*.pkg.tar.xz; do
-        yes | pacman -U "$instPkg";
+        cp "$instPkg" "$ar_inst"/archraid/x86_64/squashfs-root/opt/;
     done;
 done;
 
-#compilar pacotes AUR
-declare -a aurlist=("perl-authen-pam" "perl-encode-detect" "webmin" "mergerfs" "snapraid" "netatalk" "bcache-tools") &&
-for package in ${aurlist[@]}; do
-    cd /tmp
-    git clone "https://aur.archlinux.org/$package.git"
-    cd "$package" || exit;
-    chgrp nobody . &&
-    chmod g+ws . &&
-    setfacl -m u::rwx,g::rwx . &&
-    setfacl -d --set u::rwx,g::rwx,o::- . &&
-    sudo -u nobody makepkg &&
-    for instPkg in ./*.pkg.tar.xz; do
-        cp "$instPkg" ~/customiso/x86_64/squashfs-root/opt/;
-    done;
-done;
+userdel ___aur;
 
-cd ~/customiso/x86_64
+cd  "$ar_inst"/archraid/x86_64/
 
-#Reliza instalação dentro do CHRoot
-#curl -s http://server/path/script.sh | bash -s arg1 arg2
-curl -s https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot.sh | bash
+arch-chroot squashfs-root << EOF
+  curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot.sh | bash -s "$hostname"
+  exit
+EOF
 
-mv squashfs-root/boot/vmlinuz-linux ~/customiso/boot/x86_64/vmlinuz
-mv squashfs-root/boot/initramfs-linux.img ~/customiso/boot/x86_64/archiso.img
-rm squashfs-root/boot/initramfs-linux-fallback.img
-mv squashfs-root/pkglist.txt ~/customiso/pkglist.x86_64.txt
+cp squashfs-root/boot/vmlinuz-linux                 "$ar_inst"/archraid/boot/x86_64/vmlinuz-linux
+cp squashfs-root/boot/initramfs-linux.img           "$ar_inst"/archraid/boot/x86_64/initramfs-linux.img
+cp squashfs-root/boot/initramfs-linux-fallback.img  "$ar_inst"/archraid/boot/x86_64/initramfs-linux-fallback.img
+cp squashfs-root/boot/memtest86+/memtest.bin        "$ar_inst"/archraid/boot/memtest
+cp squashfs-root/pkglist.txt                        "$ar_inst"/archraid/pkglist.x86_64.txt
 
-mksquashfs squashfs-root airootfs.sfs
-rm -r squashfs-root
+ln -sf /run/archiso/bootmnt/boot/x86_64/vmlinuz-linux                 boot/vmlinuz-linux
+ln -sf /run/archiso/bootmnt/boot/x86_64/initramfs-linux.img           boot/initramfs-linux.img
+ln -sf /run/archiso/bootmnt/boot/x86_64/initramfs-linux-fallback.img  boot/initramfs-linux-fallback.img
+
+
+mksquashfs \
+  boot \
+  squashfs-root/{bin,dev,etc,home,lib,lib64,mnt,opt,proc,root,run,sbin,srv,sys,tmp,usr,var,share} \
+  airootfs.sfs
+
 sha512sum airootfs.sfs > airootfs.sha512
 
-
-
-iso_label="AR20190507"
-mkdir mnt
-mount -t vfat -o loop ~/customiso/EFI/archiso/efiboot.img mnt
-cp ~/customiso/boot/x86_64/vmlinuz mnt/EFI/archiso/vmlinuz.efi
-cp ~/customiso/boot/x86_64/archiso.img mnt/EFI/archiso/archiso.img
-sed -i "s/archisolabel=ARCH_201904/archisolabel=$iso_label cow_label=cow intel_iommu=on/" mnt/loader/entries/archiso-x86_64.conf
-umount mnt
-rm -r mnt
+rm -r {boot,squashfs-root}
