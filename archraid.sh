@@ -23,7 +23,7 @@ fi;
 
 pacman -Sy --noconfirm pacman-contrib
 #cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-curl -s "https://www.archlinux.org/mirrorlist/?country=$country&protocol=http&protocol=https&ip_version=4&use_mirror_status=on" |
+curl -sL "https://www.archlinux.org/mirrorlist/?country=$country&protocol=http&protocol=https&ip_version=4&use_mirror_status=on" |
    sed -e 's/^#Server/Server/' -e '/^#/d' |
    rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
 
@@ -70,7 +70,7 @@ userdel ___aur;
 cd  "$ar_inst"/archraid/x86_64/
 
 arch-chroot squashfs-root << EOF
-  curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot.sh | bash -s "$hostname"
+  curl -sL "https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot.sh" | bash -s "$hostname"
   exit
 EOF
 
