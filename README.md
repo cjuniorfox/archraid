@@ -11,8 +11,7 @@ I do not maitain no archives. Everithing is build straight from Pacman's Arch Li
 
 ## Disclaimer
 
-Because this runs from sudo, install a lot of things and do some risky activities, like format disks and so on, I don't recommend you execute straight from your working machine. 
-Is desirable boot up from ArchIso Live (phisically disconnecting every important HD and SSD from your computer) or running from virtual machine session (Virtualbox or something like that). In script it is planned to resize the persistence disk (cowspace) in RAM to 3Gb  
+Because the script runs straight from sudo, install a lot of things (to build the image) and do some risky actions (like partition and format a thumbdrive) and so on, I do not recommend make an image from your workstation machine. Is highty desirable to boot up from ArchIso Live session (phisically disconnecting every HD and SSD with important data from your computer) or running from virtual machine session, like Virtualbox or something (recommended way). If you runs from ArchISO session, the script resize the persistence disk (cowspace) in RAM to 3Gb.
 
 
 ## Prerequisits
