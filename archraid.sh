@@ -21,7 +21,7 @@ if [ -z $hostname ]; then
     fi;
 fi;
 
-yes | pacman -Sy pacman-contrib
+pacman -Sy --noconfirm pacman-contrib
 #cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 curl -s "https://www.archlinux.org/mirrorlist/?country=$country&protocol=http&protocol=https&ip_version=4&use_mirror_status=on" |
    sed -e 's/^#Server/Server/' -e '/^#/d' |
@@ -38,7 +38,7 @@ mkdir squashfs-root
 pacstrap squashfs-root base archiso
 
 #Baixa e compila o AURMAN (equivalente ao pacman para pacotes AUR)
-yes | pacman -S \
+pacman -S --noconfirm \
   expac \
   python-requests \
   python-regex \

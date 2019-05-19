@@ -36,7 +36,7 @@ echo "___aur ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 #Instala aurman
 for file in /opt/*.pkg.tar.xz; do
     echo "Instalando $file";
-    yes | pacman -U "$file" &&
+    pacman -U --noconfirm "$file" &&
     rm "$file"
 done;
 
