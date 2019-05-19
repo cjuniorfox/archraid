@@ -66,14 +66,13 @@ mkdir -p $ar_inst/mnt/image/{boot/grub,archraid/x86_64} ;
 #File to load archraid boot
 touch $ar_inst/mnt/image/ARCHRAID ;
 
-echo "Copying files to block device";
-cp -rv "$ar_inst"/archraid/x86_64/{airootfs.sfs,airootfs.sha512} "$ar_inst"/mnt/image/archraid/x86_64 &&
+cd  "$ar_inst"/archraid/x86_64/
+mksquashfs \
+  boot \
+  squashfs-root/{bin,dev,etc,home,lib,lib64,mnt,opt,proc,root,run,sbin,srv,sys,tmp,usr,var,share} \
+  "$ar_inst"/mnt/image/archraid/x86_64/airootfs.sfs
+sha512sum "$ar_inst"/mnt/image/archraid/x86_64/airootfs.sfs > "$ar_inst"/mnt/image/archraid/x86_64/airootfs.sha512
 cp -rv "$ar_inst"/archraid/boot/* "$ar_inst"/mnt/image/boot/
-#cp -rv "$ar_inst"/archraid-gui/* "$ar_inst"/mnt/image/archraid-gui/
-#cp -v $ar_inst/archraid/x86_64/{airootfs.sfs,airootfs.sha512} $ar_inst/mnt/image/archraid/x86_64/ ;
-#cp -v $ar_inst/archraid/boot/x86_64/{vmlinuz-linux,initramfs-linux.img,initramfs-linux-fallback.img} $ar_inst/mnt/image/boot/x86_64/ ;
-#cp -v $ar_inst/archraid/boot/memtest $ar_inst/mnt/image/boot/ ;
-#cp -v $ar_inst/archraid-gui/x86_64/{airootfs.sfs,airootfs.sha512} $ar_inst/mnt/image/archraid-gui/x86_64/ ;
 
 #grub menu
 cat << EOF > $ar_inst/mnt/image/boot/grub/grub.cfg
@@ -83,6 +82,10 @@ set default="0"
 set timeout=5
 menuentry "ArchRaid x86_64 USB" {
     linux /boot/x86_64/vmlinuz-linux earlymodules=xhci_hcd modules-load=xhci_hcd archisobasedir=archraid archisolabel=$label cow_label=cow intel_iommu=on
+    initrd /boot/x86_64/initramfs-linux.img
+}
+menuentry "ArchRaid x86_64 USB (RAM)" {
+    linux /boot/x86_64/vmlinuz-linux earlymodules=xhci_hcd modules-load=xhci_hcd archisobasedir=archraid archisolabel=$label copytoram intel_iommu=on
     initrd /boot/x86_64/initramfs-linux.img
 }
 menuentry "ArchRaid x86_64 USB (fallback)" {
