@@ -27,9 +27,10 @@ curl -s "https://www.archlinux.org/mirrorlist/?country=$country&protocol=http&pr
    sed -e 's/^#Server/Server/' -e '/^#/d' |
    rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
 
-echo -e "\ny" | pacman -Sy --force base-devel make \
-  perl-module-build perl-net-ssleay avahi python2 dbus-glib python2-dbus git \
-  squashfs-tools 
+
+
+echo -e "\ny" | pacman -Sy --force base-devel git make squashfs-tools  #\
+#  perl-module-build perl-net-ssleay avahi python2 dbus-glib python2-dbus git \
 
 mkdir -p "$ar_inst"/archraid/{boot/x86_64,x86_64/boot}
 
@@ -37,64 +38,38 @@ cd  "$ar_inst"/archraid/x86_64/
 
 mkdir squashfs-root
 
-pacstrap squashfs-root base archiso zsh
+pacstrap squashfs-root base archiso
 
-#Pacotes para Webvirtmgr
-#yes | pacman -S dmidecode dnsmasq ebtables libvirt-python python2 python2-django python2-gunicorn \
-#     python2-lockfile python2-pip bridge-utils python-distribute python-numpy libvirt-python2 supervisor
+#Baixa e compila o AURMAN (equivalente ao pacman para pacotes AUR)
+yes | pacman -S \
+  expac \
+  python-requests \
+  python-regex \
+  python-dateutil \
+  pyalpm \
+  python-feedparser
 
-#Pacote para build websockfy
-yes | pacman -S python-distribute
-
-#Pacote para build webvirtmgr
-#yes | pacman -S python2-pip
-
-#pacotes para build OVMF
-#yes |  pacman -S iasl nasm perl-libwww python2 subversion
-
-
-#Compila dependências AUR
-declare -a aurlist=("perl-authen-pam" "perl-encode-detect")  &&
+useradd __aur -m -s /bin/bash 
+#key from aurman
+sudo -u __aur gpg --recv-keys 465022E743D71E39
+declare -a aurlist=("yay") &&
 for package in ${aurlist[@]}; do
     cd /tmp ;
     git clone "https://aur.archlinux.org/$package.git" ;
     cd "$package" || exit;
-    chmod -R 777 /usr/lib/python*
-    chgrp nobody . &&
+    chgrp __aur . &&
     chmod g+ws . &&
     setfacl -m u::rwx,g::rwx . &&
     setfacl -d --set u::rwx,g::rwx,o::- . &&
-    sudo -u nobody makepkg ;
-    for instPkg in ./*.pkg.tar.xz; do
-        yes | pacman -U "$instPkg";
-    done;
-    chmod -R 755 /usr/lib/python*
-done;
-
-#compilar pacotes AUR
-declare -a aurlist=("mergerfs" "perl-authen-pam" "perl-encode-detect" "webmin" \
- "mergerfs" "snapraid" "netatalk" "bcache-tools" ) &&
-for package in ${aurlist[@]}; do
-    cd /tmp ;
-    git clone "https://aur.archlinux.org/$package.git" ;
-    cd "$package" || exit;
-    chmod -R 777 /usr/lib/python*
-    chgrp nobody . &&
-    chmod g+ws . &&
-    setfacl -m u::rwx,g::rwx . &&
-    setfacl -d --set u::rwx,g::rwx,o::- . &&
-    sudo -u nobody makepkg -d;
+    sudo -u __aur makepkg -d;
     for instPkg in ./*.pkg.tar.xz; do
         cp "$instPkg" "$ar_inst"/archraid/x86_64/squashfs-root/opt/;
     done;
-    chmod -R 755 /usr/lib/python*
 done;
 
-cd  "$ar_inst"/archraid/x86_64/
+userdel __aur;
 
-#Reliza instalação dentro do CHRoot
-#curl -s http://server/path/script.sh | bash -s arg1 arg2
-#!/bin/bash
+cd  "$ar_inst"/archraid/x86_64/
 
 arch-chroot squashfs-root << EOF
   curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot.sh | bash -s "$hostname"
@@ -117,30 +92,6 @@ mksquashfs \
   squashfs-root/{bin,dev,etc,home,lib,lib64,mnt,opt,proc,root,run,sbin,srv,sys,tmp,usr,var,share} \
   airootfs.sfs
 
-#mksquashfs squashfs-root airootfs.sfs -e \
-#  boot/vmlinuz-linux \
-#  boot/initramfs-linux.img \
-#  boot/initramfs-linux-fallback.img \
-#  boot/memtest86+ \
-#  pkglist.txt
-
 sha512sum airootfs.sfs > airootfs.sha512
 
-##Realiza instalação adicional de ambiente gráfico
-#arch-chroot squashfs-root << EOF
-#  curl -s -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot-gui.sh | bash -
-#  exit
-#EOF
-#
-#cp squashfs-root/pkglist.txt "$ar_inst"/archraid-gui/pkglist.x86_64.txt
-#
-##cria novamente imagem compactada do sistema
-#mksquashfs squashfs-root "$ar_inst"/archraid-gui/x86_64/airootfs.sfs -e \
-#  boot/vmlinuz-linux \
-#  boot/initramfs-linux.img \
-#  boot/initramfs-linux-fallback.img \
-#  boot/memtest86+ \
-#  pkglist.txt
-#
-#sha512sum "$ar_inst"/archraid-gui/x86_64/airootfs.sfs > "$ar_inst"/archraid-gui/x86_64/airootfs.sha512
 rm -r {boot,squashfs-root}
