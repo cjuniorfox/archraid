@@ -34,3 +34,6 @@ chown webvirtmgr:webvirtmgr /usr/lib/webvirtmgr/webvirtmgr/local/.secret_key_sto
 # temporary, see https://github.com/retspen/webvirtmgr/issues/391
 PYTHONPATH=/usr/lib/webvirtmgr/lib python2 /usr/lib/webvirtmgr/manage.py collectstatic
 ```
+
+### To Virtualize MacOS
+https://passthroughpo.st/new-and-improved-mac-os-tutorial-part-1-the-basics/
