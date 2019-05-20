@@ -23,3 +23,14 @@ For single GPU Passthrough, see:
 https://github.com/joeknock90/Single-GPU-Passthrough/blob/master/README.md
 
 ## Post Installation
+
+### Webvirtmgr
+
+#### Webvirtmgr. After instal, run this post installation commands:
+
+```
+PYTHONPATH=/usr/lib/webvirtmgr/lib python2 /usr/lib/webvirtmgr/manage.py syncdb
+chown webvirtmgr:webvirtmgr /usr/lib/webvirtmgr/webvirtmgr/local/.secret_key_store /usr/lib/webvirtmgr/webvirtmgr.sqlite3 /usr/lib/webvirtmgr 
+# temporary, see https://github.com/retspen/webvirtmgr/issues/391
+PYTHONPATH=/usr/lib/webvirtmgr/lib python2 /usr/lib/webvirtmgr/manage.py collectstatic
+```
