@@ -92,6 +92,9 @@ mkdir -p /var/spool/samba/ &&
 
 curl -sL "https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_arch-chroot-gui.sh" | bash -
 
+#Snapraid configuration example:
+curl -sSL 'https://raw.githubusercontent.com/amadvance/snapraid/master/snapraid.conf.example' -o /etc/snapraid.conf
+
 mkinitcpio -p linux;
 LANG=C pacman -Sl | awk '/\[installed\]$/ {print $1 "/" $2 "-" $3}' > /pkglist.txt;
 yay -Scc --noconfirm;
