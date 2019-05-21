@@ -12,7 +12,7 @@ locale-gen
 sed -i  s/CheckSpace/\#CheckSpace/ /etc/pacman.conf
 
 pacman -Syu --force --noconfirm archiso linux memtest86+ \
-   fuse3 sudo \
+   fuse3 sudo gdisk \
    qemu libvirt ovmf \
    bridge-utils openssh networkmanager dnsmasq \
    samba transmission-cli nginx \
