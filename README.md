@@ -1,4 +1,4 @@
-# archraid
+# ArchRAID
 Script to create a Linux Raid based Thumb drive installation with KVM-Qemu, SnapRAID, bcache and more.
 
 ## Introduction
@@ -34,6 +34,8 @@ chown webvirtmgr:webvirtmgr /usr/lib/webvirtmgr/webvirtmgr/local/.secret_key_sto
 # temporary, see https://github.com/retspen/webvirtmgr/issues/391
 PYTHONPATH=/usr/lib/webvirtmgr/lib python2 /usr/lib/webvirtmgr/manage.py collectstatic
 ```
+### Enable Hugepages (improve performance)
+https://kyau.net/wiki/ArchLinux:KVM#Hugepages
 
 ### To Virtualize MacOS
 https://passthroughpo.st/new-and-improved-mac-os-tutorial-part-1-the-basics/
