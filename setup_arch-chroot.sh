@@ -13,7 +13,7 @@ sed -i  s/CheckSpace/\#CheckSpace/ /etc/pacman.conf
 
 pacman -Syu --force --noconfirm archiso linux memtest86+ \
    fuse3 sudo gdisk \
-   qemu libvirt ovmf \
+   qemu libvirt ovmf openbsd-netcat \
    bridge-utils openssh networkmanager dnsmasq \
    samba transmission-cli nginx \
    pciutils xfsprogs cups \
