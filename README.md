@@ -39,3 +39,6 @@ https://kyau.net/wiki/ArchLinux:KVM#Hugepages
 
 ### To Virtualize MacOS
 https://passthroughpo.st/new-and-improved-mac-os-tutorial-part-1-the-basics/
+
+### Setup bridge to share network adapter with KVM guests
+https://www.cyberciti.biz/faq/how-to-add-network-bridge-with-nmcli-networkmanager-on-linux/
