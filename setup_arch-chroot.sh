@@ -62,8 +62,8 @@ sed -i "s/#auth_unix_rw/auth_unix_rw/" /etc/libvirt/libvirtd.conf
 #Cria diretórios referente aos serviços de comp. De arquivos
 mkdir -p /share/{Download,Files,Media,ISO,timemachine}
 groupadd network
-chgrp network /share/{Download,Games,Files,Media,ISO,timemachine}
-chmod -R 770 /share/{Download,Games,Files,Media,ISO,timemachine}
+chgrp network /share/{Downloads,Games,Files,Media,ISO,timemachine}
+chmod -R 770 /share/{Downloads,Games,Files,Media,ISO,timemachine}
 
 echo "$1" > /etc/hostname
 ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
