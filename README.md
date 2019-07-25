@@ -14,7 +14,7 @@ I do not maitain no archives. Everithing is build straight from Pacman's Arch Li
 Because the script runs straight from sudo, install a lot of things (to build the image) and do some risky actions (like partition and format a thumbdrive) and so on, I do not recommend make an image from your workstation machine. Is highty desirable to boot up from ArchIso Live session (phisically disconnecting every HD and SSD with important data from your computer) or running from virtual machine session, like Virtualbox or something (recommended way). If you runs from ArchISO session, the script resize the persistence disk (cowspace) in RAM to 3Gb.
 
 
-## Prerequisits
+## Prerequisites
 * A ArhLinux or other Pacman distribution (Live ArchISO session recommended. See: https://www.archlinux.org/download/)
 * At least 4Gb RAM
 * Thumbdrive with 2GB (4GB is recommended)
