@@ -30,6 +30,7 @@ pacman -S --noconfirm \
   pyalpm \
   python-feedparser
 
+useradd ___aur -ms /bin/bash
 #key from aurman
 #sudo -u ___aur gpg --recv-keys 465022E743D71E39
 pacman -S go --noconfirm
