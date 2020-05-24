@@ -26,7 +26,7 @@ https://github.com/joeknock90/Single-GPU-Passthrough/blob/master/README.md
 
 ### Webvirtmgr
 
-#### Webvirtmgr. After instal, run this post installation commands:
+#### Webvirtmgr. After installation, is needed to run post installation commands:
 
 ```
 PYTHONPATH=/usr/lib/webvirtmgr/lib python2 /usr/lib/webvirtmgr/manage.py syncdb
