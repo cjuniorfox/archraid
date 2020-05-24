@@ -22,6 +22,17 @@ Because the script runs straight from sudo, install a lot of things (to build th
 For single GPU Passthrough, see:
 https://github.com/joeknock90/Single-GPU-Passthrough/blob/master/README.md
 
+## Installation.
+### Using Arch ISO (Recommended)
+Boot Arch Iso
+```
+curl -sL "https://raw.githubusercontent.com/cjuniorfox/archraid/master/archraid.sh" | bash -
+```
+### Using pre-installed Arch installation
+```
+curl -sL "https://raw.githubusercontent.com/cjuniorfox/archraid/master/setup_archraid.sh" | bash -
+```
+
 ## Post Installation
 
 ### Webvirtmgr
