@@ -1,7 +1,7 @@
  #!/bin/bash
  label="AR20190507";
 
- mkdir -p ~/mnt/{efi,image}
+ mkdir -p ./mnt/{efi,image}
 
  parted --script $disk \
     mklabel gpt \
@@ -40,20 +40,20 @@ EOF
 
  sgdisk -A 3:set:2 $disk
 
- mount ${disk}2 ~/mnt/efi &&
- mount ${disk}3 ~/mnt/image
+ mount ${disk}2 ./mnt/efi &&
+ mount ${disk}3 ./mnt/image
 
 
-cd ~/customiso/
-cp -Rv * ~/mnt/image
+cd ./customiso/
+cp -Rv * ./mnt/image
 
 #uefi
 mkdir mnt && mount -o loop ./EFI/archiso/efiboot.img mnt &&
-cp -Rv mnt/* ~/mnt/efi
+cp -Rv mnt/* ./mnt/efi
 umount mnt && rm -rf 
 
 #boot legacy
-cd ~/mnt/image
+cd ./mnt/image
 mkdir syslinux
 mv isolinux/isolinux.cfg syslinux/syslinux.cfg
 rm -rf isolinux
