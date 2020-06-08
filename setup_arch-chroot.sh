@@ -25,7 +25,7 @@ pacman -Syu --noconfirm archiso linux memtest86+ \
    base-devel git make go
 
 #Dependência para webvirtmgr
-pacman -S libvirt-python2 --noconfirm
+#pacman -S libvirt-python --noconfirm
 
 groupadd sudo
 chmod +w /etc/sudoers
@@ -42,7 +42,7 @@ done;
 #Installing aur packages
 useradd -ms /bin/bash ___aur
 usermod -aG sudo ___aur
-sudo -u ___aur yay -S bcache-tools snapraid mergerfs webmin webvirtmgr-git netatalk --noconfirm
+sudo -u ___aur yay -S bcache-tools snapraid mergerfs webmin webvirtmgr netatalk --noconfirm
 userdel ___aur;
 sed -i "s/___aur ALL=(ALL) NOPASSWD: ALL//" /etc/sudoers
 rm -r /home/___aur
@@ -54,8 +54,9 @@ systemctl enable webvirtmgr-novnc
 #Configure nginx to proxy webvirtmgr
 mkdir /etc/nginx/sites-{available,enabled} 
 sed -i 's/^    server/    include sites-enabled\/*;\n    server/g' /etc/nginx/nginx.conf
-cp /etc/nginx/conf.d/webvirtmgr.nginx.conf.sample /etc/nginx/sites-available/webvirtmgr &&
-  ln -s /etc/nginx/sites-available/webvirtmgr /etc/nginx/sites-enabled/webvirtmgr
+##cp /etc/nginx/conf.d/webvirtmgr.nginx.conf.sample /etc/nginx/sites-available/webvirtmgr &&
+curl -sL "https://raw.githubusercontent.com/cjuniorfox/archraid/master/sh_config/webvirtmgr.conf" > /etc/nginx/sites-available/webvirtmgr
+ln -s /etc/nginx/sites-available/webvirtmgr /etc/nginx/sites-enabled/webvirtmgr
 #webvirtmgr authentication
 sed -i "s/#auth_unix_rw/auth_unix_rw/" /etc/libvirt/libvirtd.conf
 
